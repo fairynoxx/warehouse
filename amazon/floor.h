@@ -18,13 +18,13 @@ class Floor : public QWidget
 public:
     explicit Floor(int sizeX, int sizeY, QWidget *parent = nullptr);
     ~Floor();
-    void drawNet();
+    void initFloor();
 
 private:
     Ui::Floor *ui;
     QPair<int, int> floorSize;
     QGraphicsScene *scene;
-    class Tile *t;
+    QVector<QVector <Tile*>> tiles;
 };
 
 #endif // FLOOR_H
