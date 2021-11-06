@@ -19,7 +19,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::initFloor(int sizeX, int sizeY)
 {
-   floorW = new class floor(sizeX, sizeY,this);
+   floorW = new class Floor(sizeX, sizeY,this);
    this->ui->gridLayout->addWidget(floorW);
 }
 

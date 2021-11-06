@@ -4,23 +4,27 @@
 #include <QWidget>
 #include <QPair>
 #include <QPainter>
+#include <QGraphicsScene>
+#include "tile.h"
 
 namespace Ui {
-class floor;
+class Floor;
 }
 
-class floor : public QWidget
+class Floor : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit floor(int sizeX, int sizeY, QWidget *parent = nullptr);
-    ~floor();
+    explicit Floor(int sizeX, int sizeY, QWidget *parent = nullptr);
+    ~Floor();
     void drawNet();
 
 private:
-    Ui::floor *ui;
+    Ui::Floor *ui;
     QPair<int, int> floorSize;
+    QGraphicsScene *scene;
+    class Tile *t;
 };
 
 #endif // FLOOR_H

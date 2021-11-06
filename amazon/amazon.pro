@@ -11,11 +11,13 @@ CONFIG += c++11
 SOURCES += \
     floor.cpp \
     main.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    tile.cpp
 
 HEADERS += \
     floor.h \
-    mainwindow.h
+    mainwindow.h \
+    tile.h
 
 FORMS += \
     floor.ui \
@@ -25,3 +27,9 @@ FORMS += \
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+DISTFILES += \
+    images/tile.png
+
+RESOURCES += \
+    images.qrc

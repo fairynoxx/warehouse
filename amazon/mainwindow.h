@@ -21,6 +21,6 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
-    class floor *floorW;
+    class Floor *floorW;
 };
 #endif // MAINWINDOW_H

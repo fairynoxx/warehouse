@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/">
+        <file>images/tile.png</file>
+    </qresource>
+</RCC>
