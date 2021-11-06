@@ -19,6 +19,8 @@ public:
     explicit Floor(int sizeX, int sizeY, QWidget *parent = nullptr);
     ~Floor();
     void initFloor();
+    QSize getsize();
+    void setFloorSize(int,int);
 
 private:
     Ui::Floor *ui;

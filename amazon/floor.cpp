@@ -14,6 +14,8 @@ Floor::Floor(int sizeX, int sizeY, QWidget *parent) :
     scene = new QGraphicsScene(this);
     scene->setSceneRect(ui->graphicsView->rect());
     this->ui->graphicsView->setScene(scene);
+    show();
+ //   this->ui->graphicsView->fitInView(ui->graphicsView->rect(),Qt::KeepAspectRatio);
 }
 
 Floor::~Floor()
@@ -41,5 +43,16 @@ void Floor::initFloor()
         }
         this->tiles.push_back(column);
     }
+    this->ui->graphicsView->fitInView(ui->graphicsView->rect(),Qt::KeepAspectRatio);
+}
 
+QSize Floor::getsize()
+{
+    return this->ui->graphicsView->size();
+}
+
+void Floor::setFloorSize(int x, int y)
+{
+    this->floorSize.first = y;
+    this->floorSize.second = x;
 }
