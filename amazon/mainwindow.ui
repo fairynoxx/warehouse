@@ -33,7 +33,11 @@
          </widget>
         </item>
         <item>
-         <widget class="QSpinBox" name="spinBoxWidth"/>
+         <widget class="QSpinBox" name="spinBoxWidth">
+          <property name="value">
+           <number>10</number>
+          </property>
+         </widget>
         </item>
         <item>
          <widget class="QLabel" name="label">
@@ -43,7 +47,11 @@
          </widget>
         </item>
         <item>
-         <widget class="QSpinBox" name="spinBoxHeight"/>
+         <widget class="QSpinBox" name="spinBoxHeight">
+          <property name="value">
+           <number>10</number>
+          </property>
+         </widget>
         </item>
         <item>
          <widget class="QPushButton" name="pushButton">
