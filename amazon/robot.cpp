@@ -8,6 +8,7 @@ Robot::Robot(int x, int y, int scale, QObject *parent, QGraphicsItem *parentPix)
     this->setX(x*scale);
     this->setY(y*scale);
     this->setScale(double(scale/500));
+    setFlag(ItemSendsGeometryChanges);
 }
 
 void Robot::moveRobot(Direction d)
