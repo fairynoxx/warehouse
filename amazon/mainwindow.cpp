@@ -26,10 +26,9 @@ void MainWindow::initFloor(int sizeX, int sizeY)
 void MainWindow::on_pushButton_clicked()
 {
     initFloor(ui->spinBoxWidth->value(),ui->spinBoxHeight->value());
-  //  floorW->setFloorSize(ui->spinBoxWidth->value(),ui->spinBoxHeight->value());
+    floorW->setFloorSize(ui->spinBoxWidth->value(),ui->spinBoxHeight->value());
     floorW->initFloor();
     QSize s = floorW->getsize();
-    qDebug() << s.width() << " " << s.height();
     floorW->addRobot(5,5);
 
 }

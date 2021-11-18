@@ -13,29 +13,31 @@ Robot::Robot(int x, int y, int scale, QObject *parent, QGraphicsItem *parentPix)
     this->setY(y*scale);
     this->setScale(double(unit)/500);
     this->setVisible(true);
-    rotation = Direction::north;
-    setFlag(ItemSendsGeometryChanges);
+    orientation = Direction::north;
 }
 
 void Robot::rotateRobot(Direction d)
 {
-    if(d != rotation)
+    if(d != orientation)
     {
         int temp = getRotations(d);
         if(temp > 0)
         {
             for(int i = 0; i < temp; i++) {
-                this->setRotation(90);
+                this->setRotation(rotation()+90);
+                this->update();
                 std::this_thread::sleep_for(std::chrono::seconds(2));
             }
         }
         else
         {
-            this->setRotation(-90);
+            this->setRotation(rotation()-90);
+            this->update();
+
             std::this_thread::sleep_for(std::chrono::seconds(2));
         }
     }
-    rotation = d;
+    orientation = d;
 }
 void Robot::moveRobot(Direction d)
 {
@@ -65,19 +67,19 @@ bool Robot::isDirectionOpposite(Direction d)
 {
     switch (d) {
     case Direction::north:
-        if(rotation == Direction::south)
+        if(orientation == Direction::south)
             return true;
         break;
     case Direction::south:
-        if(rotation == Direction::north)
+        if(orientation == Direction::north)
             return true;
         break;
     case Direction::east:
-        if(rotation == Direction::west)
+        if(orientation == Direction::west)
             return true;
         break;
     case Direction::west:
-        if(rotation == Direction::east)
+        if(orientation == Direction::east)
             return true;
         break;
     }
@@ -91,25 +93,25 @@ int Robot::getRotations(Direction d)
 
     switch (d) {
     case Direction::north:
-        if(rotation == Direction::west)
+        if(orientation == Direction::west)
             return 1;
         else
             return -1;
         break;
     case Direction::south:
-        if(rotation == Direction::east)
+        if(orientation == Direction::east)
             return 1;
         else
             return -1;
         break;
     case Direction::east:
-        if(rotation == Direction::north)
+        if(orientation == Direction::north)
             return 1;
         else
             return -1;
         break;
     case Direction::west:
-        if(rotation == Direction::south)
+        if(orientation == Direction::south)
             return 1;
         else
             return -1;

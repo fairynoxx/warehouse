@@ -21,7 +21,7 @@ private:
     int posX;
     int posY;
     int unit;
-    Direction rotation;
+    Direction orientation;
     void rotateRobot(Direction);
     int getRotations(Direction);
     bool isDirectionOpposite(Direction);

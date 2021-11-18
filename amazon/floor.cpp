@@ -63,6 +63,7 @@ void Floor::addRobot(int x, int y)
     Robot *r = new Robot(x, y, tileSize);
     robots.push_back(r);
     scene->addItem(r);
+    qDebug() << r->x() << " " << r->y();
 }
 
 void Floor::moveRobot(Direction d)
