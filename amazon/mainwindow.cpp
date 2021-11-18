@@ -30,7 +30,32 @@ void MainWindow::on_pushButton_clicked()
     floorW->initFloor();
     QSize s = floorW->getsize();
     qDebug() << s.width() << " " << s.height();
-    floorW->addRobot(0,0);
+    floorW->addRobot(5,5);
+
 }
 
+void MainWindow::on_buttonNorth_clicked()
+{
+    floorW->moveRobot(Direction::north);
+}
+
+
+
+void MainWindow::on_buttonSouth_clicked()
+{
+    floorW->moveRobot(Direction::south);
+
+}
+
+
+void MainWindow::on_buttonEast_clicked()
+{
+    floorW->moveRobot(Direction::east);
+}
+
+
+void MainWindow::on_buttonWest_clicked()
+{
+    floorW->moveRobot(Direction::west);
+}
 

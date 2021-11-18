@@ -40,7 +40,7 @@ void Floor::initFloor()
             column.back()->setScale(double(scale)/500);
             qDebug()<<t->x() << " " << t->y() << " " << t->scale();
 
-            //scene->addItem(t);
+            scene->addItem(t);
         }
         this->tiles.push_back(column);
     }
@@ -63,4 +63,9 @@ void Floor::addRobot(int x, int y)
     Robot *r = new Robot(x, y, tileSize);
     robots.push_back(r);
     scene->addItem(r);
+}
+
+void Floor::moveRobot(Direction d)
+{
+    robots[0]->moveRobot(d);
 }

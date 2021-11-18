@@ -23,6 +23,7 @@ public:
     QSize getsize();
     void setFloorSize(int,int);
     void addRobot(int,int);
+    void moveRobot(Direction);
 
 private:
     Ui::Floor *ui;

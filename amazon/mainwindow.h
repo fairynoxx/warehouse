@@ -21,6 +21,14 @@ private slots:
 
     void on_pushButton_clicked();
 
+    void on_buttonNorth_clicked();
+
+    void on_buttonSouth_clicked();
+
+    void on_buttonEast_clicked();
+
+    void on_buttonWest_clicked();
+
 private:
     Ui::MainWindow *ui;
     class Floor *floorW;

@@ -20,8 +20,14 @@ public:
 private:
     int posX;
     int posY;
+    int unit;
     Direction rotation;
+    void rotateRobot(Direction);
+    int getRotations(Direction);
+    bool isDirectionOpposite(Direction);
+public:
     void moveRobot(Direction);
+
 signals:
 
 };
