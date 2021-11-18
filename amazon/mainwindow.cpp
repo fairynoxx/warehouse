@@ -30,6 +30,7 @@ void MainWindow::on_pushButton_clicked()
     floorW->initFloor();
     QSize s = floorW->getsize();
     qDebug() << s.width() << " " << s.height();
+    floorW->addRobot(0,0);
 }
 
 

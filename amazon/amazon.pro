@@ -12,11 +12,13 @@ SOURCES += \
     floor.cpp \
     main.cpp \
     mainwindow.cpp \
+    robot.cpp \
     tile.cpp
 
 HEADERS += \
     floor.h \
     mainwindow.h \
+    robot.h \
     tile.h
 
 FORMS += \
@@ -29,6 +31,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 DISTFILES += \
+    images/robot.png \
     images/tile.png
 
 RESOURCES += \

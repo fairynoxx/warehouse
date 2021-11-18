@@ -27,6 +27,7 @@ void Floor::initFloor()
 {
     QSize size = this->ui->graphicsView->size();
     int scale = size.width()/std::max(floorSize.first, floorSize.second);
+    this->tileSize = scale;
     for (int i = 0; i < this->floorSize.first; i++)
     {
         QVector<Tile*> column;
@@ -36,10 +37,10 @@ void Floor::initFloor()
             column.push_back(t);
             column.back()->setX(scale*j);
             column.back()->setY(scale*i);
-            column.back()->setScale(double(size.width()/floorSize.first)/500);
+            column.back()->setScale(double(scale)/500);
             qDebug()<<t->x() << " " << t->y() << " " << t->scale();
 
-            scene->addItem(t);
+            //scene->addItem(t);
         }
         this->tiles.push_back(column);
     }
@@ -55,4 +56,11 @@ void Floor::setFloorSize(int x, int y)
 {
     this->floorSize.first = y;
     this->floorSize.second = x;
+}
+
+void Floor::addRobot(int x, int y)
+{
+    Robot *r = new Robot(x, y, tileSize);
+    robots.push_back(r);
+    scene->addItem(r);
 }
