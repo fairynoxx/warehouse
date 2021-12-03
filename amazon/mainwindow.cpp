@@ -30,6 +30,12 @@ void MainWindow::on_pushButton_clicked()
     floorW->initFloor();
     QSize s = floorW->getsize();
     floorW->addRobot(5,5);
+    floorW->addShelf(1,1,PackageType::cat1);
+    floorW->addShelf(4,4,PackageType::cat2);
+    floorW->addShelf(6,3,PackageType::cat3);
+    floorW->addShelf(9,2,PackageType::cat4);
+    floorW->addShelf(3,3,PackageType::cat3);
+    floorW->printShelves();
 }
 
 void MainWindow::on_buttonNorth_clicked()

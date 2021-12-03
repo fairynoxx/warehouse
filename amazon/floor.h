@@ -7,6 +7,7 @@
 #include <QGraphicsScene>
 #include "tile.h"
 #include "robot.h"
+#include "shelf.h"
 
 namespace Ui {
 class Floor;
@@ -24,7 +25,8 @@ public:
     void setFloorSize(int,int);
     void addRobot(int,int);
     void moveRobot(Direction);
-
+    void addShelf(int, int, PackageType);
+    void printShelves();
 private:
     Ui::Floor *ui;
     int tileSize;
@@ -32,6 +34,8 @@ private:
     QGraphicsScene *scene;
     QVector<QVector <Tile*>> tiles;
     QVector<Robot*> robots;
+    QMap<PackageType, QVector<Shelf*>> shelves;
+    void initializeShelves();
 };
 
 
