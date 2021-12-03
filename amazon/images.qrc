@@ -2,6 +2,13 @@
     <qresource prefix="/">
         <file>images/tile.png</file>
         <file>images/robot.png</file>
-        <file>images/shelf.png</file>
+        <file>images/shelf_1_empty.png</file>
+        <file>images/shelf_1_full.png</file>
+        <file>images/shelf_2_empty.png</file>
+        <file>images/shelf_2_full.png</file>
+        <file>images/shelf_3_empty.png</file>
+        <file>images/shelf_3_full.png</file>
+        <file>images/shelf_4_empty.png</file>
+        <file>images/shelf_4_full.png</file>
     </qresource>
 </RCC>

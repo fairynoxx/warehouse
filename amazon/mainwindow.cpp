@@ -41,6 +41,9 @@ void MainWindow::on_pushButton_clicked()
 void MainWindow::on_buttonNorth_clicked()
 {
     floorW->moveRobot(Direction::north);
+    //// SHELF TESTING
+    Package* pkg = new Package(1,PackageType::cat1);
+    floorW->shelves[PackageType::cat1][0]->addPackage(pkg);
 }
 
 
@@ -48,7 +51,8 @@ void MainWindow::on_buttonNorth_clicked()
 void MainWindow::on_buttonSouth_clicked()
 {
     floorW->moveRobot(Direction::south);
-
+    //// SHELF TESTING
+    floorW->shelves[PackageType::cat1][0]->removePackage(1);
 }
 
 

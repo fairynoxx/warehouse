@@ -27,6 +27,8 @@ public:
     void moveRobot(Direction);
     void addShelf(int, int, PackageType);
     void printShelves();
+    ///// MOVE TO PRIVATE
+    QMap<PackageType, QVector<Shelf*>> shelves;
 private:
     Ui::Floor *ui;
     int tileSize;
@@ -34,7 +36,7 @@ private:
     QGraphicsScene *scene;
     QVector<QVector <Tile*>> tiles;
     QVector<Robot*> robots;
-    QMap<PackageType, QVector<Shelf*>> shelves;
+
     void initializeShelves();
 };
 

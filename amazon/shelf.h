@@ -5,19 +5,20 @@
 #include <QGraphicsPixmapItem>
 #include "package.h"
 
-#define MAX_PKGS 10
+#define MAX_PKGS 1
 
 class Shelf : public QObject, public QGraphicsPixmapItem
 {
     Q_OBJECT
 public:
-    explicit Shelf(int, int, QObject *parent = nullptr, QGraphicsItem *parentPix = nullptr);
+    explicit Shelf(int, int, PackageType, QObject *parent = nullptr, QGraphicsItem *parentPix = nullptr);
 private:
 
     int unit;
     bool isFull = false;
     PackageType type;
     QMap<int, Package*> packages;
+    void setImage();
 public:
     //// TODO move to private
     int posX;

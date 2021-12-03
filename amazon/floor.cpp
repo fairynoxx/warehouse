@@ -75,7 +75,7 @@ void Floor::moveRobot(Direction d)
 
 void Floor::addShelf(int xPos, int yPos, PackageType type)
 {
-    Shelf* s = new Shelf(xPos, yPos);
+    Shelf* s = new Shelf(xPos, yPos, type);
     scene->addItem(s);
     s->setX(xPos*tileSize);
     s->setY(yPos*tileSize);
