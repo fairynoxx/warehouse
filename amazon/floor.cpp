@@ -2,6 +2,7 @@
 #include "ui_floor.h"
 #include <QDebug>
 #include <algorithm>
+#include "shelf.h"
 
 
 Floor::Floor(int sizeX, int sizeY, QWidget *parent) :
@@ -64,6 +65,12 @@ void Floor::addRobot(int x, int y)
     robots.push_back(r);
     scene->addItem(r);
     qDebug() << r->x() << " " << r->y();
+    ////////////////// shelf testing
+    Shelf *s = new Shelf(4,4);
+    scene->addItem(s);
+    s->setX(4*tileSize);
+    s->setY(4*tileSize);
+    s->setScale(double(tileSize)/500);
 }
 
 void Floor::moveRobot(Direction d)

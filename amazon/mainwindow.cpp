@@ -30,7 +30,6 @@ void MainWindow::on_pushButton_clicked()
     floorW->initFloor();
     QSize s = floorW->getsize();
     floorW->addRobot(5,5);
-
 }
 
 void MainWindow::on_buttonNorth_clicked()

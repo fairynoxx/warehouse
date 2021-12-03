@@ -2,5 +2,6 @@
     <qresource prefix="/">
         <file>images/tile.png</file>
         <file>images/robot.png</file>
+        <file>images/shelf.png</file>
     </qresource>
 </RCC>

@@ -13,12 +13,14 @@ SOURCES += \
     main.cpp \
     mainwindow.cpp \
     robot.cpp \
+    shelf.cpp \
     tile.cpp
 
 HEADERS += \
     floor.h \
     mainwindow.h \
     robot.h \
+    shelf.h \
     tile.h
 
 FORMS += \
@@ -32,6 +34,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 DISTFILES += \
     images/robot.png \
+    images/shelf.png \
     images/tile.png
 
 RESOURCES += \
