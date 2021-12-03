@@ -12,6 +12,7 @@ SOURCES += \
     floor.cpp \
     main.cpp \
     mainwindow.cpp \
+    package.cpp \
     robot.cpp \
     shelf.cpp \
     tile.cpp
@@ -19,6 +20,7 @@ SOURCES += \
 HEADERS += \
     floor.h \
     mainwindow.h \
+    package.h \
     robot.h \
     shelf.h \
     tile.h

@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QGraphicsPixmapItem>
+#include "package.h"
 
 class Shelf : public QObject, public QGraphicsPixmapItem
 {
@@ -13,6 +14,11 @@ private:
     int posX;
     int posY;
     int unit;
+    PackageType type;
+    QMap<int, Package*> packages;
+public:
+    void addPackage(Package* pkg);
+    Package* removePackage(int id);
 signals:
 
 };

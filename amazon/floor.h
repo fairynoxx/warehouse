@@ -34,4 +34,5 @@ private:
     QVector<Robot*> robots;
 };
 
+
 #endif // FLOOR_H
