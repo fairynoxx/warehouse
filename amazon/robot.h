@@ -19,8 +19,6 @@ class Robot : public QObject, public QGraphicsPixmapItem
 public:
     explicit Robot(int, int, int, QObject *parent = nullptr, QGraphicsItem *parentPix = nullptr);
 private:
-    int posX;
-    int posY;
     int unit;
     Direction orientation;
     void rotateRobot(Direction);
@@ -28,6 +26,9 @@ private:
     bool isDirectionOpposite(Direction);
     Package* pkg;
 public:
+    //// MOVE TO PRIVATE
+    int posX;
+    int posY;
     void moveRobot(Direction);
 
 signals:

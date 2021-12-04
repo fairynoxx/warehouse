@@ -24,7 +24,6 @@ void Robot::rotateRobot(Direction d)
         {
             for(int i = 0; i < temp; i++) {
                 QPixmap p2 = this->pixmap().transformed(QTransform().rotate(90));
-                //this->setRotation(rotation()+90);
                 this->setPixmap(p2);
                 this->update();
                 std::this_thread::sleep_for(std::chrono::milliseconds(100));
@@ -34,7 +33,6 @@ void Robot::rotateRobot(Direction d)
         {
             QPixmap p2 = this->pixmap().transformed(QTransform().rotate(-90));
             this->setPixmap(p2);
-            //this->setRotation(rotation()-90);
             this->update();
             std::this_thread::sleep_for(std::chrono::milliseconds(100));
         }

@@ -15,6 +15,7 @@ public:
 private:
     int unit;
     bool isFull = false;
+    bool isEmpty = true;
     PackageType type;
     QMap<int, Package*> packages;
     void setImage();
@@ -26,6 +27,8 @@ public:
     void addPackage(Package* pkg);
     Package* removePackage(int id);
     bool isShelfFull();
+    bool isShelfEmpty();
+    QVector<Package*> availablePackages();
 signals:
 
 };

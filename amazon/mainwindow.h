@@ -36,5 +36,7 @@ private:
     Ui::MainWindow *ui;
     class Floor *floorW;
     int numOfPackages = 0;
+    Shelf* shelfNearRobot(Robot*);
+    void checkForPackages(Robot*);
 };
 #endif // MAINWINDOW_H

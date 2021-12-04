@@ -69,9 +69,9 @@ void Floor::addRobot(int x, int y)
     qDebug() << r->x() << " " << r->y();
 }
 
-void Floor::moveRobot(Direction d)
+void Floor::moveRobot(Robot* r, Direction d)
 {
-    robots[0]->moveRobot(d);
+    r->moveRobot(d);
 }
 
 void Floor::addShelf(int xPos, int yPos, PackageType type)
@@ -107,6 +107,11 @@ void Floor::addNewPackage(Package* pkg)
     qDebug() << newPackages.size();
 }
 
+QVector<Package*> Floor::availablePackages(Shelf* s)
+{
+    return s->availablePackages();
+}
+
 void Floor::initializeShelves()
 {
     QVector<Shelf*> v1;
@@ -118,3 +123,4 @@ void Floor::initializeShelves()
     QVector<Shelf*> v4;
     shelves.insert(PackageType::cat4, v4);
 }
+

@@ -12,36 +12,36 @@ void Shelf::setImage()
 {
     switch (type) {
     case PackageType::cat1:
-        if(isShelfFull() == true)
+        if(isShelfFull())
             setPixmap(QPixmap(":/images/shelf_1_full.png"));
-        else if(packages.size() == 0)
+        else if(isShelfEmpty())
             setPixmap(QPixmap(":/images/shelf_1_empty.png"));
         else
             setPixmap(QPixmap(":/images/shelf_1.png"));
         break;
     case PackageType::cat2:
-        if(isShelfFull() == true)
+        if(isShelfFull())
             setPixmap(QPixmap(":/images/shelf_2_full.png"));
-        else if(packages.size() == 0)
+        else if(isShelfEmpty())
             setPixmap(QPixmap(":/images/shelf_2_empty.png"));
         else
             setPixmap(QPixmap(":/images/shelf_2.png"));
         break;
     case PackageType::cat3:
-        if(isShelfFull() == true)
-            setPixmap(QPixmap(":/images/shelf_2_full.png"));
-        else if(packages.size() == 0)
-            setPixmap(QPixmap(":/images/shelf_2_empty.png"));
+        if(isShelfFull())
+            setPixmap(QPixmap(":/images/shelf_3_full.png"));
+        else if(isShelfEmpty())
+            setPixmap(QPixmap(":/images/shelf_3_empty.png"));
         else
-            setPixmap(QPixmap(":/images/shelf_2.png"));
+            setPixmap(QPixmap(":/images/shelf_3.png"));
         break;
     case PackageType::cat4:
-        if(isShelfFull() == true)
-            setPixmap(QPixmap(":/images/shelf_2_full.png"));
-        else if(packages.size() == 0)
-            setPixmap(QPixmap(":/images/shelf_2_empty.png"));
+        if(isShelfFull())
+            setPixmap(QPixmap(":/images/shelf_4_full.png"));
+        else if(isShelfEmpty())
+            setPixmap(QPixmap(":/images/shelf_4_empty.png"));
         else
-            setPixmap(QPixmap(":/images/shelf_2.png"));
+            setPixmap(QPixmap(":/images/shelf_4.png"));
         break;
     default:
         break;
@@ -55,6 +55,8 @@ void Shelf::addPackage(Package *pkg)
     pkg->changeStatus(PackageStatus::delivered);
     if (packages.size() == MAX_PKGS)
         isFull = true;
+    if (isEmpty)
+        isEmpty = false;
     setImage();
 }
 
@@ -62,8 +64,10 @@ Package* Shelf::removePackage(int id)
 {
     Package *pkg = packages.take(id);
     pkg->changeStatus(PackageStatus::onTheWay);
-    if (isFull == true)
+    if (isFull)
         isFull = false;
+    if (packages.size() == 0)
+        isEmpty = true;
     setImage();
     return pkg;
 }
@@ -71,4 +75,18 @@ Package* Shelf::removePackage(int id)
 bool Shelf::isShelfFull()
 {
     return isFull;
+}
+
+bool Shelf::isShelfEmpty()
+{
+    return isEmpty;
+}
+
+QVector<Package*> Shelf::availablePackages()
+{
+    QVector<Package*> v;
+    QList<Package*> l = packages.values();
+    for (auto a: l)
+        v.push_back(a);
+    return v;
 }

@@ -25,20 +25,21 @@ public:
     QSize getsize();
     void setFloorSize(int,int);
     void addRobot(int,int);
-    void moveRobot(Direction);
+    void moveRobot(Robot*, Direction);
     void addShelf(int, int, PackageType);
     void printShelves();
     ///// MOVE TO PRIVATE
     QMap<PackageType, QVector<Shelf*>> shelves;
+    QVector<Robot*> robots;
     QQueue<Package*> newPackages;
     void addNewPackage(Package*);
+    QVector<Package*> availablePackages(Shelf*);
 private:
     Ui::Floor *ui;
     int tileSize;
     QPair<int, int> floorSize;
     QGraphicsScene *scene;
     QVector<QVector <Tile*>> tiles;
-    QVector<Robot*> robots;
     void initializeShelves();
 };
 

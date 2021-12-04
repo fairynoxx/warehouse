@@ -37,31 +37,36 @@ void MainWindow::on_pushButton_clicked()
     floorW->addShelf(4,4,PackageType::cat2);
     floorW->addShelf(6,3,PackageType::cat3);
     floorW->addShelf(9,2,PackageType::cat4);
-    floorW->addShelf(3,3,PackageType::cat3);
     floorW->printShelves();
 }
 
 void MainWindow::on_buttonNorth_clicked()
 {
-    floorW->moveRobot(Direction::north);
+    floorW->moveRobot(floorW->robots[0], Direction::north);
+    checkForPackages(floorW->robots[0]);
+
 }
 
 
 void MainWindow::on_buttonSouth_clicked()
 {
-    floorW->moveRobot(Direction::south);
+    floorW->moveRobot(floorW->robots[0], Direction::south);
+    checkForPackages(floorW->robots[0]);
+
 }
 
 
 void MainWindow::on_buttonEast_clicked()
 {
-    floorW->moveRobot(Direction::east);
+    floorW->moveRobot(floorW->robots[0], Direction::east);
+    checkForPackages(floorW->robots[0]);
 }
 
 
 void MainWindow::on_buttonWest_clicked()
 {
-    floorW->moveRobot(Direction::west);
+    floorW->moveRobot(floorW->robots[0], Direction::west);
+    checkForPackages(floorW->robots[0]);
 }
 
 
@@ -87,6 +92,38 @@ void MainWindow::on_pushButtonCreatePackage_clicked()
     }
     Package* pkg = new Package(numOfPackages, t);
     numOfPackages++;
-    floorW->addNewPackage(pkg);
+    //floorW->addNewPackage(pkg);
+    floorW->shelves[t][0]->addPackage(pkg);
+}
+
+Shelf* MainWindow::shelfNearRobot(Robot * r)
+{
+    for (auto &a: floorW->shelves)
+    {
+        for (auto b: a)
+        {
+            if (r->posX == b->posX)
+                if (b->posY == r->posY - 1 || b->posY == r->posY + 1)
+                    return b;
+            if (r->posY == b->posY)
+                if (b->posX == r->posX - 1 || b->posX == r->posX + 1)
+                    return b;
+        }
+    }
+    return nullptr;
+}
+
+void MainWindow::checkForPackages(Robot * r)
+{
+    Shelf* s = shelfNearRobot(r);
+    ui->comboBoxAvailablePackages->clear();
+    if (s != nullptr)
+    {
+        QVector<Package*> v = floorW->availablePackages(s);
+        for (auto a: v)
+        {
+            ui->comboBoxAvailablePackages->addItem(QString::number(a->id));
+        }
+    }
 }
 
