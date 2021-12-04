@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QGraphicsPixmapItem>
+#include "package.h"
 
 enum class Direction
 {
@@ -25,6 +26,7 @@ private:
     void rotateRobot(Direction);
     int getRotations(Direction);
     bool isDirectionOpposite(Direction);
+    Package* pkg;
 public:
     void moveRobot(Direction);
 

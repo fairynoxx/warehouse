@@ -8,7 +8,8 @@ enum class PackageType
     cat1,
     cat2,
     cat3,
-    cat4
+    cat4,
+    start
 };
 
 enum class PackageStatus
@@ -27,7 +28,9 @@ private:
     PackageStatus status;
     PackageType type;
 public:
+    //// TODO MOVE TO PRIVATE, ADD METHOD
     int id;
+    ////
     void changeStatus(PackageStatus);
 };
 

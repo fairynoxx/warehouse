@@ -5,7 +5,7 @@
 #include <QGraphicsPixmapItem>
 #include "package.h"
 
-#define MAX_PKGS 1
+#define MAX_PKGS 2
 
 class Shelf : public QObject, public QGraphicsPixmapItem
 {
@@ -13,7 +13,6 @@ class Shelf : public QObject, public QGraphicsPixmapItem
 public:
     explicit Shelf(int, int, PackageType, QObject *parent = nullptr, QGraphicsItem *parentPix = nullptr);
 private:
-
     int unit;
     bool isFull = false;
     PackageType type;

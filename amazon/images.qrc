@@ -10,5 +10,11 @@
         <file>images/shelf_3_full.png</file>
         <file>images/shelf_4_empty.png</file>
         <file>images/shelf_4_full.png</file>
+        <file>images/shelf_1.png</file>
+        <file>images/shelf_2.png</file>
+        <file>images/shelf_3.png</file>
+        <file>images/shelf_4.png</file>
+        <file>images/robot_pkg.png</file>
+        <file>images/start_tile.png</file>
     </qresource>
 </RCC>

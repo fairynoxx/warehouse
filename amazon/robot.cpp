@@ -2,7 +2,6 @@
 #include <thread>
 #include <chrono>
 
-
 Robot::Robot(int x, int y, int scale, QObject *parent, QGraphicsItem *parentPix) : QObject(parent), QGraphicsPixmapItem(parentPix)
 {
     posX = x;
@@ -24,17 +23,20 @@ void Robot::rotateRobot(Direction d)
         if(temp > 0)
         {
             for(int i = 0; i < temp; i++) {
-                this->setRotation(rotation()+90);
+                QPixmap p2 = this->pixmap().transformed(QTransform().rotate(90));
+                //this->setRotation(rotation()+90);
+                this->setPixmap(p2);
                 this->update();
-                std::this_thread::sleep_for(std::chrono::seconds(2));
+                std::this_thread::sleep_for(std::chrono::milliseconds(100));
             }
         }
         else
         {
-            this->setRotation(rotation()-90);
+            QPixmap p2 = this->pixmap().transformed(QTransform().rotate(-90));
+            this->setPixmap(p2);
+            //this->setRotation(rotation()-90);
             this->update();
-
-            std::this_thread::sleep_for(std::chrono::seconds(2));
+            std::this_thread::sleep_for(std::chrono::milliseconds(100));
         }
     }
     orientation = d;
@@ -60,7 +62,7 @@ void Robot::moveRobot(Direction d)
         this->setX(posX*unit);
         break;
     }
-    std::this_thread::sleep_for(std::chrono::seconds(2));
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
 }
 
 bool Robot::isDirectionOpposite(Direction d)

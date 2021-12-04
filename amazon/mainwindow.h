@@ -30,8 +30,11 @@ private slots:
 
     void on_buttonWest_clicked();
 
+    void on_pushButtonCreatePackage_clicked();
+
 private:
     Ui::MainWindow *ui;
     class Floor *floorW;
+    int numOfPackages = 0;
 };
 #endif // MAINWINDOW_H

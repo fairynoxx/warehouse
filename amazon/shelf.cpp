@@ -12,28 +12,36 @@ void Shelf::setImage()
 {
     switch (type) {
     case PackageType::cat1:
-        if(isShelfFull() == false)
+        if(isShelfFull() == true)
+            setPixmap(QPixmap(":/images/shelf_1_full.png"));
+        else if(packages.size() == 0)
             setPixmap(QPixmap(":/images/shelf_1_empty.png"));
         else
-            setPixmap(QPixmap(":/images/shelf_1_full.png"));
+            setPixmap(QPixmap(":/images/shelf_1.png"));
         break;
     case PackageType::cat2:
-        if(isShelfFull() == false)
+        if(isShelfFull() == true)
+            setPixmap(QPixmap(":/images/shelf_2_full.png"));
+        else if(packages.size() == 0)
             setPixmap(QPixmap(":/images/shelf_2_empty.png"));
         else
-            setPixmap(QPixmap(":/images/shelf_2_full.png"));
+            setPixmap(QPixmap(":/images/shelf_2.png"));
         break;
     case PackageType::cat3:
-        if(isShelfFull() == false)
-            setPixmap(QPixmap(":/images/shelf_3_empty.png"));
+        if(isShelfFull() == true)
+            setPixmap(QPixmap(":/images/shelf_2_full.png"));
+        else if(packages.size() == 0)
+            setPixmap(QPixmap(":/images/shelf_2_empty.png"));
         else
-            setPixmap(QPixmap(":/images/shelf_3_full.png"));
+            setPixmap(QPixmap(":/images/shelf_2.png"));
         break;
     case PackageType::cat4:
-        if(isShelfFull() == false)
-            setPixmap(QPixmap(":/images/shelf_4_empty.png"));
+        if(isShelfFull() == true)
+            setPixmap(QPixmap(":/images/shelf_2_full.png"));
+        else if(packages.size() == 0)
+            setPixmap(QPixmap(":/images/shelf_2_empty.png"));
         else
-            setPixmap(QPixmap(":/images/shelf_4_full.png"));
+            setPixmap(QPixmap(":/images/shelf_2.png"));
         break;
     default:
         break;
@@ -50,7 +58,7 @@ void Shelf::addPackage(Package *pkg)
     setImage();
 }
 
-Package *Shelf::removePackage(int id)
+Package* Shelf::removePackage(int id)
 {
     Package *pkg = packages.take(id);
     pkg->changeStatus(PackageStatus::onTheWay);

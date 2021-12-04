@@ -47,6 +47,7 @@ void Floor::initFloor()
     }
     this->ui->graphicsView->fitInView(ui->graphicsView->rect(),Qt::KeepAspectRatio);
     initializeShelves();
+    tiles[5][0]->setPixmap(QPixmap(":/images/start_tile.png"));
 }
 
 QSize Floor::getsize()
@@ -98,6 +99,12 @@ void Floor::printShelves()
     for (int i = 0; i < shelves[PackageType::cat4].size(); i++)
         qDebug() << shelves[PackageType::cat4][i]->posX << " " << shelves[PackageType::cat4][i]->posY;
 
+}
+
+void Floor::addNewPackage(Package* pkg)
+{
+    newPackages.enqueue(pkg);
+    qDebug() << newPackages.size();
 }
 
 void Floor::initializeShelves()
