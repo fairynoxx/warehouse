@@ -35,7 +35,8 @@ void MainWindow::on_pushButton_clicked()
     floorW->addRobot(5,5);
     floorW->addShelf(1,1,PackageType::cat1);
     floorW->addShelf(4,4,PackageType::cat2);
-    floorW->addShelf(6,3,PackageType::cat3);
+    floorW->addShelf(9,8,PackageType::cat2);
+    floorW->addShelf(6,4,PackageType::cat3);
     floorW->addShelf(9,2,PackageType::cat4);
     floorW->printShelves();
 }
@@ -96,34 +97,73 @@ void MainWindow::on_pushButtonCreatePackage_clicked()
     floorW->shelves[t][0]->addPackage(pkg);
 }
 
-Shelf* MainWindow::shelfNearRobot(Robot * r)
+QVector<Shelf*> MainWindow::shelfNearRobot(Robot * r)
 {
+    QVector<Shelf*> v;
     for (auto &a: floorW->shelves)
     {
         for (auto b: a)
         {
             if (r->posX == b->posX)
                 if (b->posY == r->posY - 1 || b->posY == r->posY + 1)
-                    return b;
+                    v.push_back(b);
             if (r->posY == b->posY)
                 if (b->posX == r->posX - 1 || b->posX == r->posX + 1)
-                    return b;
+                    v.push_back(b);
         }
     }
-    return nullptr;
+    return v;
 }
 
 void MainWindow::checkForPackages(Robot * r)
 {
-    Shelf* s = shelfNearRobot(r);
+    QVector<Shelf*> s = shelfNearRobot(r);
     ui->comboBoxAvailablePackages->clear();
-    if (s != nullptr)
+    if (!s.isEmpty())
     {
-        QVector<Package*> v = floorW->availablePackages(s);
-        for (auto a: v)
+        QVector<Package*> v;
+        for (auto a: s)
         {
-            ui->comboBoxAvailablePackages->addItem(QString::number(a->id));
+            v = floorW->availablePackages(a);
+            for (auto b: v)
+            {
+                ui->comboBoxAvailablePackages->addItem(QString::number(b->id));
+            }
+        }
+
+    }
+}
+
+
+void MainWindow::on_buttonTakePackage_clicked()
+{
+    QVector<Shelf*> s = shelfNearRobot(floorW->robots[0]);
+    if (!s.isEmpty())
+    {
+        if (!floorW->robots[0]->isBusy())
+        {
+            for (auto a: s)
+            {
+                if(a->isThereAPackage(ui->comboBoxAvailablePackages->currentText().toInt()))
+                {
+                    floorW->robots[0]->takePackage(a->removePackage(ui->comboBoxAvailablePackages->currentText().toInt()));
+                    break;
+                }
+            }
+        }
+        else
+        {
+            for (auto a: s)
+            {
+                if(floorW->robots[0]->getPackageType() == a->getShelfType())
+                {
+                    a->addPackage(floorW->robots[0]->leavePackage());
+                    break;
+                }
+            }
+
         }
     }
+
 }
 

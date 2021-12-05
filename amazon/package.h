@@ -24,6 +24,7 @@ class Package
 {
 public:
     Package(int, PackageType);
+    ~Package();
 private:
     PackageStatus status;
     PackageType type;
@@ -32,6 +33,7 @@ public:
     int id;
     ////
     void changeStatus(PackageStatus);
+    PackageType getPackageType();
 };
 
 #endif // PACKAGE_H

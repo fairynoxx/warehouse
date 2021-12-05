@@ -29,6 +29,8 @@ public:
     bool isShelfFull();
     bool isShelfEmpty();
     QVector<Package*> availablePackages();
+    PackageType getShelfType();
+    bool isThereAPackage(int);
 signals:
 
 };

@@ -1,4 +1,5 @@
 #include "package.h"
+#include <QDebug>
 
 Package::Package(int pkgId, PackageType pkgType)
 {
@@ -10,4 +11,14 @@ Package::Package(int pkgId, PackageType pkgType)
 void Package::changeStatus(PackageStatus pkgStatus)
 {
     status = pkgStatus;
+}
+
+PackageType Package::getPackageType()
+{
+    return type;
+}
+
+Package::~Package()
+{
+    qDebug() << "died";
 }

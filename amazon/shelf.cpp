@@ -90,3 +90,15 @@ QVector<Package*> Shelf::availablePackages()
         v.push_back(a);
     return v;
 }
+
+PackageType Shelf::getShelfType()
+{
+    return type;
+}
+
+bool Shelf::isThereAPackage(int id)
+{
+    if (packages.keys().contains(id))
+        return true;
+    return false;
+}

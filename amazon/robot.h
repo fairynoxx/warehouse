@@ -25,12 +25,16 @@ private:
     int getRotations(Direction);
     bool isDirectionOpposite(Direction);
     Package* pkg;
+    void updateImgRotation();
 public:
     //// MOVE TO PRIVATE
     int posX;
     int posY;
     void moveRobot(Direction);
-
+    void takePackage(Package* p);
+    Package* leavePackage();
+    bool isBusy();
+    PackageType getPackageType();
 signals:
 
 };

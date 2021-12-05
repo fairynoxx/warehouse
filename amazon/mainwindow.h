@@ -32,11 +32,13 @@ private slots:
 
     void on_pushButtonCreatePackage_clicked();
 
+    void on_buttonTakePackage_clicked();
+
 private:
     Ui::MainWindow *ui;
     class Floor *floorW;
     int numOfPackages = 0;
-    Shelf* shelfNearRobot(Robot*);
+    QVector<Shelf*> shelfNearRobot(Robot*);
     void checkForPackages(Robot*);
 };
 #endif // MAINWINDOW_H

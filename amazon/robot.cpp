@@ -13,6 +13,7 @@ Robot::Robot(int x, int y, int scale, QObject *parent, QGraphicsItem *parentPix)
     this->setScale(double(unit)/500);
     this->setVisible(true);
     orientation = Direction::north;
+    this->pkg = nullptr;
 }
 
 void Robot::rotateRobot(Direction d)
@@ -61,6 +62,57 @@ void Robot::moveRobot(Direction d)
         break;
     }
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
+}
+
+void Robot::takePackage(Package* p)
+{
+    this->pkg = p;
+    this->setPixmap(QPixmap(":/images/robot_pkg.png"));
+    updateImgRotation();
+}
+
+Package *Robot::leavePackage()
+{
+    this->setPixmap(QPixmap(":images/robot.png"));
+    updateImgRotation();
+    Package* p = this->pkg;
+    this->pkg = nullptr;
+    return p;
+}
+
+bool Robot::isBusy()
+{
+    if (this->pkg == nullptr)
+        return false;
+    return true;
+}
+
+PackageType Robot::getPackageType()
+{
+    if (this->pkg != nullptr)
+        return pkg->getPackageType();
+    return PackageType::start;
+}
+
+void Robot::updateImgRotation()
+{
+    QPixmap p2;
+    switch (orientation) {
+    case Direction::east:
+        p2 = this->pixmap().transformed(QTransform().rotate(90));
+        this->setPixmap(p2);
+        break;
+    case Direction::west:
+        p2 = this->pixmap().transformed(QTransform().rotate(-90));
+        this->setPixmap(p2);
+        break;
+    case Direction::south:
+        p2 = this->pixmap().transformed(QTransform().rotate(180));
+        this->setPixmap(p2);
+        break;
+    default:
+        break;
+    }
 }
 
 bool Robot::isDirectionOpposite(Direction d)
