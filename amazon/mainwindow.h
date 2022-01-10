@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include "floor.h"
 #include "shelf.h"
+#include "robotsupervisor.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -37,6 +38,7 @@ private slots:
 private:
     Ui::MainWindow *ui;
     class Floor *floorW;
+    RobotSupervisor * RS;
     int numOfPackages = 0;
     QVector<Shelf*> shelfNearRobot(Robot*);
     void checkForPackages(Robot*);

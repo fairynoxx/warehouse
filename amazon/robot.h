@@ -35,6 +35,7 @@ public:
     Package* leavePackage();
     bool isBusy();
     PackageType getPackageType();
+    QPair<int,int> getCurrentPosition();
 signals:
 
 };

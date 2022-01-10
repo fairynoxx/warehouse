@@ -82,6 +82,7 @@ void Floor::addShelf(int xPos, int yPos, PackageType type)
     s->setY(yPos*tileSize);
     s->setScale(double(tileSize)/500);
     shelves[type].push_back(s);
+    tiles[xPos][yPos]->changeTileStatus(TileStatus::occupied);
 }
 
 void Floor::printShelves()

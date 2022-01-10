@@ -94,6 +94,14 @@ PackageType Robot::getPackageType()
     return PackageType::start;
 }
 
+QPair<int, int> Robot::getCurrentPosition()
+{
+    QPair<int,int> p;
+    p.first = posX;
+    p.second = posY;
+    return p;
+}
+
 void Robot::updateImgRotation()
 {
     QPixmap p2;

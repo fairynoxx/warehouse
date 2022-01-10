@@ -12,6 +12,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->comboBoxPackageType->addItem("category 2");
     ui->comboBoxPackageType->addItem("category 3");
     ui->comboBoxPackageType->addItem("category 4");
+    RS = new RobotSupervisor;
 }
 
 MainWindow::~MainWindow()
@@ -33,6 +34,11 @@ void MainWindow::on_pushButton_clicked()
     floorW->initFloor();
     //QSize s = floorW->getsize();
     floorW->addRobot(5,5);
+    floorW->addRobot(6,6);
+    floorW->addRobot(7,7);
+    RS->addRobot(floorW->robots[0]);
+    RS->addRobot(floorW->robots[1]);
+    RS->addRobot(floorW->robots[2]);
     floorW->addShelf(1,1,PackageType::cat1);
     floorW->addShelf(4,4,PackageType::cat2);
     floorW->addShelf(9,8,PackageType::cat2);
@@ -45,7 +51,6 @@ void MainWindow::on_buttonNorth_clicked()
 {
     floorW->moveRobot(floorW->robots[0], Direction::north);
     checkForPackages(floorW->robots[0]);
-
 }
 
 
@@ -164,6 +169,8 @@ void MainWindow::on_buttonTakePackage_clicked()
 
         }
     }
-
+    RS->chooseFreeRobot(1,1);
+    RS->chooseFreeRobot(1,1);
+    RS->chooseFreeRobot(1,1);
 }
 
