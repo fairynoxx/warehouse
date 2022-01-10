@@ -34,12 +34,12 @@ public:
     QQueue<Package*> newPackages;
     void addNewPackage(Package*);
     QVector<Package*> availablePackages(Shelf*);
+    QPair<int, int> floorSize;
+    QVector<QVector <Tile*>> tiles;
 private:
     Ui::Floor *ui;
     int tileSize;
-    QPair<int, int> floorSize;
     QGraphicsScene *scene;
-    QVector<QVector <Tile*>> tiles;
     void initializeShelves();
 };
 

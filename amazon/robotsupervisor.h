@@ -4,18 +4,24 @@
 #include <QVector>
 #include "robot.h"
 #include <QPair>
+#include "floor.h"
+
 
 class RobotSupervisor
 {
 public:
     RobotSupervisor();
     void addRobot(Robot*);
-    Robot* chooseFreeRobot(int, int); // pozycja do ktorej bedzie jechal
+    int chooseFreeRobot(QPair<int,int>); // pozycja do ktorej bedzie jechal
+    QVector<QPair<int,int>> findPath(QPair<int,int>, QPair<int,int>);
+    class Floor* floor;
+    bool sendRobot(QPair<int,int>);
+    void moveRobots();
 private:
     int numOfRobots = 0;
     QMap<int, Robot*> freeRobots;
     QMap<int, Robot*> busyRobots;
-    QVector<QPair<int,int>> findPath(int, int, int, int);
+    QMap<int, QVector<QPair<int,int>>> robotsPaths;
 };
 
 #endif // ROBOTSUPERVISOR_H

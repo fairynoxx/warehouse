@@ -31,6 +31,7 @@ public:
     int posX;
     int posY;
     void moveRobot(Direction);
+    void moveRobotToCoordinates(QPair<int,int>);
     void takePackage(Package* p);
     Package* leavePackage();
     bool isBusy();

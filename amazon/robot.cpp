@@ -62,6 +62,27 @@ void Robot::moveRobot(Direction d)
         break;
     }
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
+
+}
+
+void Robot::moveRobotToCoordinates(QPair<int, int> pos)
+{
+    Direction d;
+    if(pos.first == posX)
+    {
+        if(pos.second > posY)
+            d = Direction::south;
+        else
+            d = Direction::north;
+    }
+    else
+    {
+        if(pos.first > posX)
+            d = Direction::east;
+        else
+            d = Direction::west;
+    }
+    moveRobot(d);
 }
 
 void Robot::takePackage(Package* p)

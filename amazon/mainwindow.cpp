@@ -23,6 +23,7 @@ MainWindow::~MainWindow()
 void MainWindow::initFloor(int sizeX, int sizeY)
 {
    floorW = new class Floor(sizeX, sizeY,this);
+   RS->floor = floorW;
    this->ui->horizontalLayout_2->insertWidget(0, floorW);
 }
 
@@ -45,6 +46,9 @@ void MainWindow::on_pushButton_clicked()
     floorW->addShelf(6,4,PackageType::cat3);
     floorW->addShelf(9,2,PackageType::cat4);
     floorW->printShelves();
+    RS->sendRobot(QPair<int,int>(1,8));
+    RS->sendRobot(QPair<int,int>(9,9));
+    RS->sendRobot(QPair<int,int>(0,9));
 }
 
 void MainWindow::on_buttonNorth_clicked()
@@ -169,8 +173,6 @@ void MainWindow::on_buttonTakePackage_clicked()
 
         }
     }
-    RS->chooseFreeRobot(1,1);
-    RS->chooseFreeRobot(1,1);
-    RS->chooseFreeRobot(1,1);
+    RS->moveRobots();
 }
 
