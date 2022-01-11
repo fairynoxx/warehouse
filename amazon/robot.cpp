@@ -67,6 +67,8 @@ void Robot::moveRobot(Direction d)
 
 void Robot::moveRobotToCoordinates(QPair<int, int> pos)
 {
+    if(pos.first == posX && pos.second == posY)
+        return;
     Direction d;
     if(pos.first == posX)
     {

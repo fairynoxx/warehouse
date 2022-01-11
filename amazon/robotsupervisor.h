@@ -22,6 +22,9 @@ private:
     QMap<int, Robot*> freeRobots;
     QMap<int, Robot*> busyRobots;
     QMap<int, QVector<QPair<int,int>>> robotsPaths;
+    void robotsSynch();
+    bool sendRobotId(int, QPair<int,int>);
+    void updateFieldsState();
 };
 
 #endif // ROBOTSUPERVISOR_H
