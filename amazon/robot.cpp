@@ -117,12 +117,27 @@ PackageType Robot::getPackageType()
     return PackageType::start;
 }
 
+bool Robot::getStatus()
+{
+    return(arrived);
+}
+
+void Robot::setStatus(bool status)
+{
+    arrived = status;
+}
+
 QPair<int, int> Robot::getCurrentPosition()
 {
     QPair<int,int> p;
     p.first = posX;
     p.second = posY;
     return p;
+}
+
+void Robot::assignOrder(Order* o)
+{
+    order = o;
 }
 
 void Robot::updateImgRotation()

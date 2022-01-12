@@ -35,6 +35,7 @@ int RobotSupervisor::chooseFreeRobot(QPair<int,int> r)
     if(robotId != -1)
     {
         busyRobots.insert(robotId,freeRobots[robotId]);
+        freeRobots[robotId]->setStatus(false);
         freeRobots.remove(robotId);
     }
     else
@@ -77,11 +78,15 @@ QVector<QPair<int, int> > RobotSupervisor::findPath(QPair<int,int> p1, QPair<int
     return path.trace;
 }
 
-bool RobotSupervisor::sendRobot(QPair<int, int> destination)
+bool RobotSupervisor::sendRobot(Order* o)
 {
+    QPair<int,int> destination;
+    qDebug() << "POLE KONCOWE: " << o->position.first << " " << o->position.second;
+    destination = determineEndField(o->position);
     int robotId = chooseFreeRobot(destination);
     if (robotId != -1)
     {
+        busyRobots[robotId]->assignOrder(o);
         robotsPaths.insert(robotId, findPath(busyRobots.find(robotId).value()->getCurrentPosition(),destination));
         return true;
     }
@@ -95,10 +100,14 @@ void RobotSupervisor::moveRobots()
     auto end = robotsPaths.cend();
     for (auto a = robotsPaths.cbegin(); a != end; ++a)
     {
+        // crashes when robot is already on final tile
         //floor->tiles[busyRobots[a.key()]->getCurrentPosition().first][busyRobots[a.key()]->getCurrentPosition().second]->changeTileStatus(TileStatus::empty);
-        busyRobots.find(a.key()).value()->moveRobotToCoordinates(a.value().front());
+        if(!robotsPaths[a.key()].isEmpty())
+        {
+            busyRobots.find(a.key()).value()->moveRobotToCoordinates(a.value().front());
+            robotsPaths[a.key()].pop_front();
+        }
         //floor->tiles[busyRobots[a.key()]->getCurrentPosition().first][busyRobots[a.key()]->getCurrentPosition().second]->changeTileStatus(TileStatus::occupied);
-        robotsPaths[a.key()].pop_front();
         if(robotsPaths[a.key()].isEmpty())
         {
             freeRobots.insert(a.key(), busyRobots[a.key()]);
@@ -112,12 +121,13 @@ void RobotSupervisor::moveRobots()
     {
         robotsPaths.remove(a);
         floor->tiles[freeRobots[a]->getCurrentPosition().first][freeRobots[a]->getCurrentPosition().second]->changeTileStatus(TileStatus::occupied);
+        freeRobots[a]->setStatus(true);
     }
     if(!finishedRobots.isEmpty())
     {
         for (auto c: busyRobots.keys())
         {
-            sendRobotId(c, robotsPaths[c].back());
+            sendRobotId(c, busyRobots[c]->order->position);
         }
     }
 }
@@ -129,7 +139,7 @@ void RobotSupervisor::robotsSynch()
     {
        for (auto b = robotsPaths.cbegin(); b != end; b++)
        {
-           if(a.key() != b.key() && !robotsPaths[a.key()].isEmpty())
+           if(a.key() != b.key() && !robotsPaths[a.key()].isEmpty() && !robotsPaths[b.key()].isEmpty())
            {
                if(robotsPaths[a.key()][0] == robotsPaths[b.key()][0])
                {
@@ -143,7 +153,9 @@ void RobotSupervisor::robotsSynch()
 bool RobotSupervisor::sendRobotId(int id, QPair<int, int> d)
 {
     robotsPaths.remove(id);
-    robotsPaths.insert(id, findPath(busyRobots.find(id).value()->getCurrentPosition(),d));
+    QPair<int,int> destination;
+    destination = determineEndField(d);
+    robotsPaths.insert(id, findPath(busyRobots.find(id).value()->getCurrentPosition(),destination));
     return true;
 }
 
@@ -153,6 +165,29 @@ void RobotSupervisor::updateFieldsState()
         floor->tiles[busyRobots[a]->getCurrentPosition().first][busyRobots[a]->getCurrentPosition().second]->changeTileStatus(TileStatus::occupied);
     for (auto a: freeRobots.keys())
         floor->tiles[freeRobots[a]->getCurrentPosition().first][freeRobots[a]->getCurrentPosition().second]->changeTileStatus(TileStatus::occupied);
+}
+
+QPair<int, int> RobotSupervisor::determineEndField(QPair<int, int> shelfPos)
+{
+    for(int i = shelfPos.first - 1; i <= shelfPos.first + 1; i++)
+    {
+        for(int j = shelfPos.second - 1; j <= shelfPos.second + 1; j++)
+        {
+            if(i < floor->floorSize.first && i >= 0 && j < floor->floorSize.first && j >= 0)
+            {
+                if(i != shelfPos.first)
+                {
+                    if(j == shelfPos.second && floor->tiles[i][j]->status == TileStatus::empty)
+                        return QPair<int,int>(i,j);
+                }
+                if(j != shelfPos.second)
+                {
+                    if(i == shelfPos.first && floor->tiles[i][j]->status == TileStatus::empty)
+                        return QPair<int,int>(i,j);
+                }
+            }
+        }
+    }
 }
 
 

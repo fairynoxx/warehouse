@@ -5,6 +5,7 @@
 #include "floor.h"
 #include "shelf.h"
 #include "robotsupervisor.h"
+#include "supervisor.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -23,22 +24,17 @@ private slots:
 
     void on_pushButton_clicked();
 
-    void on_buttonNorth_clicked();
-
-    void on_buttonSouth_clicked();
-
-    void on_buttonEast_clicked();
-
-    void on_buttonWest_clicked();
-
     void on_pushButtonCreatePackage_clicked();
 
     void on_buttonTakePackage_clicked();
+
+    void on_pushButtonNewOrder_clicked();
 
 private:
     Ui::MainWindow *ui;
     class Floor *floorW;
     RobotSupervisor * RS;
+    Supervisor * S;
     int numOfPackages = 0;
     QVector<Shelf*> shelfNearRobot(Robot*);
     void checkForPackages(Robot*);

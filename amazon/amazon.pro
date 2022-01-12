@@ -17,6 +17,7 @@ SOURCES += \
     robot.cpp \
     robotsupervisor.cpp \
     shelf.cpp \
+    supervisor.cpp \
     tile.cpp
 
 HEADERS += \
@@ -26,6 +27,7 @@ HEADERS += \
     robot.h \
     robotsupervisor.h \
     shelf.h \
+    supervisor.h \
     tile.h
 
 FORMS += \

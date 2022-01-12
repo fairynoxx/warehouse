@@ -1,5 +1,6 @@
 #ifndef PACKAGE_H
 #define PACKAGE_H
+#include <QPair>
 
 
 enum class PackageType
@@ -18,6 +19,12 @@ enum class PackageStatus
     waiting,
     delivered,
     onTheWay,
+};
+
+struct Order
+{
+    QPair<int,int> position;
+    int pkgId;
 };
 
 class Package

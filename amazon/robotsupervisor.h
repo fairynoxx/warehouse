@@ -7,16 +7,18 @@
 #include "floor.h"
 
 
-class RobotSupervisor
+class RobotSupervisor : public QObject
 {
+    Q_OBJECT
 public:
     RobotSupervisor();
     void addRobot(Robot*);
     int chooseFreeRobot(QPair<int,int>); // pozycja do ktorej bedzie jechal
     QVector<QPair<int,int>> findPath(QPair<int,int>, QPair<int,int>);
     class Floor* floor;
-    bool sendRobot(QPair<int,int>);
     void moveRobots();
+public slots:
+    bool sendRobot(Order*);
 private:
     int numOfRobots = 0;
     QMap<int, Robot*> freeRobots;
@@ -25,6 +27,7 @@ private:
     void robotsSynch();
     bool sendRobotId(int, QPair<int,int>);
     void updateFieldsState();
+    QPair<int,int> determineEndField(QPair<int,int>);
 };
 
 #endif // ROBOTSUPERVISOR_H

@@ -13,6 +13,8 @@ MainWindow::MainWindow(QWidget *parent)
     ui->comboBoxPackageType->addItem("category 3");
     ui->comboBoxPackageType->addItem("category 4");
     RS = new RobotSupervisor;
+    S = new Supervisor;
+    connect(S, &Supervisor::sendOrder, RS, &RobotSupervisor::sendRobot);
 }
 
 MainWindow::~MainWindow()
@@ -22,17 +24,20 @@ MainWindow::~MainWindow()
 
 void MainWindow::initFloor(int sizeX, int sizeY)
 {
-   floorW = new class Floor(sizeX, sizeY,this);
+   floorW = new class Floor(sizeX, sizeY, this);
    RS->floor = floorW;
+   S->floor = floorW;
    this->ui->horizontalLayout_2->insertWidget(0, floorW);
 }
 
 
 void MainWindow::on_pushButton_clicked()
 {
-    initFloor(ui->spinBoxWidth->value(),ui->spinBoxHeight->value());
+    initFloor(ui->spinBoxWidth->value(), ui->spinBoxHeight->value());
     floorW->setFloorSize(ui->spinBoxWidth->value(),ui->spinBoxHeight->value());
-    floorW->initFloor();
+    QPair<int,int> start(5,0);
+    floorW->initFloor(start);
+    S->setStartTile(start);
     //QSize s = floorW->getsize();
     floorW->addRobot(5,5);
     floorW->addRobot(6,6);
@@ -40,43 +45,14 @@ void MainWindow::on_pushButton_clicked()
     RS->addRobot(floorW->robots[0]);
     RS->addRobot(floorW->robots[1]);
     RS->addRobot(floorW->robots[2]);
-    floorW->addShelf(1,1,PackageType::cat1);
-    floorW->addShelf(4,4,PackageType::cat2);
-    floorW->addShelf(9,8,PackageType::cat2);
-    floorW->addShelf(6,4,PackageType::cat3);
-    floorW->addShelf(9,2,PackageType::cat4);
-    floorW->printShelves();
-    RS->sendRobot(QPair<int,int>(1,8));
-    RS->sendRobot(QPair<int,int>(9,9));
-    RS->sendRobot(QPair<int,int>(0,9));
-}
-
-void MainWindow::on_buttonNorth_clicked()
-{
-    floorW->moveRobot(floorW->robots[0], Direction::north);
-    checkForPackages(floorW->robots[0]);
-}
-
-
-void MainWindow::on_buttonSouth_clicked()
-{
-    floorW->moveRobot(floorW->robots[0], Direction::south);
-    checkForPackages(floorW->robots[0]);
-
-}
-
-
-void MainWindow::on_buttonEast_clicked()
-{
-    floorW->moveRobot(floorW->robots[0], Direction::east);
-    checkForPackages(floorW->robots[0]);
-}
-
-
-void MainWindow::on_buttonWest_clicked()
-{
-    floorW->moveRobot(floorW->robots[0], Direction::west);
-    checkForPackages(floorW->robots[0]);
+    S->addShelf(1,1,PackageType::cat1);
+    S->addShelf(4,4,PackageType::cat2);
+    S->addShelf(9,8,PackageType::cat2);
+    S->addShelf(6,4,PackageType::cat3);
+    S->addShelf(9,2,PackageType::cat4);
+//    RS->sendRobot(QPair<int,int>(1,8));
+//    RS->sendRobot(QPair<int,int>(9,9));
+//    RS->sendRobot(QPair<int,int>(0,9));
 }
 
 
@@ -100,10 +76,7 @@ void MainWindow::on_pushButtonCreatePackage_clicked()
         t = PackageType::cat1;
         break;
     }
-    Package* pkg = new Package(numOfPackages, t);
-    numOfPackages++;
-    //floorW->addNewPackage(pkg);
-    floorW->shelves[t][0]->addPackage(pkg);
+    S->addPackage(t);
 }
 
 QVector<Shelf*> MainWindow::shelfNearRobot(Robot * r)
@@ -139,10 +112,8 @@ void MainWindow::checkForPackages(Robot * r)
                 ui->comboBoxAvailablePackages->addItem(QString::number(b->id));
             }
         }
-
     }
 }
-
 
 void MainWindow::on_buttonTakePackage_clicked()
 {
@@ -174,5 +145,11 @@ void MainWindow::on_buttonTakePackage_clicked()
         }
     }
     RS->moveRobots();
+}
+
+
+void MainWindow::on_pushButtonNewOrder_clicked()
+{
+    S->checkForOrders();
 }
 

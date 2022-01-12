@@ -43,6 +43,8 @@ void Shelf::setImage()
         else
             setPixmap(QPixmap(":/images/shelf_4.png"));
         break;
+    case PackageType::start:
+        setPixmap(QPixmap(":/images/start_field.png"));
     default:
         break;
     }

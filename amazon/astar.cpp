@@ -36,6 +36,11 @@ public:
     QVector<QPair<int,int>> trace;
     // A Utility Function to check whether given cell (row, col)
     // is a valid cell or not.
+
+    ~AStar()
+    {
+        qDebug() << "oboze umieram";
+    }
     bool isValid(int row, int col)
     {
         // Returns true if row number and column number
@@ -119,7 +124,7 @@ public:
 
         // If the destination is out of range
         if (isValid(dest.first, dest.second) == false) {
-            printf("Destination is invalid\n");
+            qDebug() << "Destination is invalid\n";
             return;
         }
 
@@ -233,7 +238,7 @@ public:
                     // Set the Parent of the destination cell
                     cellDetails[i - 1][j].parent_i = i;
                     cellDetails[i - 1][j].parent_j = j;
-                    printf("The destination cell is found\n");
+                    qDebug() << "The destination cell is found\n";
                     tracePath(cellDetails, dest);
                     foundDest = true;
                     return;

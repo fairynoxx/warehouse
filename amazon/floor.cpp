@@ -24,7 +24,7 @@ Floor::~Floor()
     delete ui;
 }
 
-void Floor::initFloor()
+void Floor::initFloor(QPair<int,int> startTile)
 {
     QSize size = this->ui->graphicsView->size();
     int scale = size.width()/std::max(floorSize.first, floorSize.second);
@@ -47,7 +47,7 @@ void Floor::initFloor()
     }
     this->ui->graphicsView->fitInView(ui->graphicsView->rect(),Qt::KeepAspectRatio);
     initializeShelves();
-    tiles[5][0]->setPixmap(QPixmap(":/images/start_tile.png"));
+    tiles[startTile.second][startTile.first]->setPixmap(QPixmap(":/images/start_tile.png"));
 }
 
 QSize Floor::getsize()

@@ -26,17 +26,22 @@ private:
     bool isDirectionOpposite(Direction);
     Package* pkg;
     void updateImgRotation();
+    bool arrived = false;
 public:
     //// MOVE TO PRIVATE
     int posX;
     int posY;
+    Order* order;
     void moveRobot(Direction);
     void moveRobotToCoordinates(QPair<int,int>);
     void takePackage(Package* p);
     Package* leavePackage();
     bool isBusy();
     PackageType getPackageType();
+    bool getStatus();
+    void setStatus(bool);
     QPair<int,int> getCurrentPosition();
+    void assignOrder(Order*);
 signals:
 
 };

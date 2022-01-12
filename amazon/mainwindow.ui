@@ -61,30 +61,6 @@
          </widget>
         </item>
         <item>
-         <layout class="QGridLayout" name="gridLayout_2">
-          <item row="0" column="1">
-           <widget class="QPushButton" name="pushButtonCreatePackage">
-            <property name="text">
-             <string>Create Package</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="0">
-           <widget class="QComboBox" name="comboBoxPackageType"/>
-          </item>
-          <item row="1" column="0">
-           <widget class="QComboBox" name="comboBoxAvailablePackages"/>
-          </item>
-          <item row="1" column="1">
-           <widget class="QPushButton" name="buttonTakePackage">
-            <property name="text">
-             <string>Take Package</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-        <item>
          <spacer name="verticalSpacer">
           <property name="orientation">
            <enum>Qt::Vertical</enum>
@@ -98,49 +74,31 @@
          </spacer>
         </item>
         <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_3">
-          <item>
-           <widget class="QPushButton" name="buttonWest">
+         <layout class="QGridLayout" name="gridLayout_2">
+          <item row="1" column="0">
+           <widget class="QComboBox" name="comboBoxAvailablePackages"/>
+          </item>
+          <item row="1" column="1">
+           <widget class="QPushButton" name="buttonTakePackage">
             <property name="text">
-             <string>west</string>
+             <string>Take Package</string>
             </property>
            </widget>
           </item>
-          <item>
-           <layout class="QVBoxLayout" name="verticalLayout_2">
-            <item>
-             <widget class="QPushButton" name="buttonNorth">
-              <property name="text">
-               <string>north</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <spacer name="verticalSpacer_2">
-              <property name="orientation">
-               <enum>Qt::Vertical</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>20</width>
-                <height>40</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-            <item>
-             <widget class="QPushButton" name="buttonSouth">
-              <property name="text">
-               <string>south</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
+          <item row="0" column="0">
+           <widget class="QComboBox" name="comboBoxPackageType"/>
           </item>
-          <item>
-           <widget class="QPushButton" name="buttonEast">
+          <item row="0" column="1">
+           <widget class="QPushButton" name="pushButtonCreatePackage">
             <property name="text">
-             <string>east</string>
+             <string>Create Package</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QPushButton" name="pushButtonNewOrder">
+            <property name="text">
+             <string>New Order</string>
             </property>
            </widget>
           </item>
