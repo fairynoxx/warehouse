@@ -21,7 +21,7 @@ class Floor : public QWidget
 public:
     explicit Floor(int sizeX, int sizeY, QWidget *parent = nullptr);
     ~Floor();
-    void initFloor(QPair<int,int>);
+    void initFloor(QPair<int,int>, QPair<int,int>);
     QSize getsize();
     void setFloorSize(int,int);
     void addRobot(int,int);

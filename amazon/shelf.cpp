@@ -6,6 +6,8 @@ Shelf::Shelf(int x, int y, PackageType t, QObject *parent, QGraphicsItem *parent
     posY = y;
     type = t;
     setImage();
+//    if(t == PackageType::start || t == PackageType::end)
+//          set some bigger MAX_PKGS
 }
 
 void Shelf::setImage()
@@ -103,4 +105,9 @@ bool Shelf::isThereAPackage(int id)
     if (packages.keys().contains(id))
         return true;
     return false;
+}
+
+QPair<int, int> Shelf::getShelfPosition()
+{
+    return QPair<int,int>(posX,posY);
 }

@@ -75,13 +75,10 @@
         </item>
         <item>
          <layout class="QGridLayout" name="gridLayout_2">
-          <item row="1" column="0">
-           <widget class="QComboBox" name="comboBoxAvailablePackages"/>
-          </item>
           <item row="1" column="1">
            <widget class="QPushButton" name="buttonTakePackage">
             <property name="text">
-             <string>Take Package</string>
+             <string>Perform one step</string>
             </property>
            </widget>
           </item>
@@ -95,10 +92,20 @@
             </property>
            </widget>
           </item>
-          <item row="2" column="1">
+          <item row="2" column="0">
+           <widget class="QComboBox" name="comboBoxAvailablePackages"/>
+          </item>
+          <item row="1" column="0">
            <widget class="QPushButton" name="pushButtonNewOrder">
             <property name="text">
              <string>New Order</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QPushButton" name="pushButtonRequestPackage">
+            <property name="text">
+             <string>Request a package</string>
             </property>
            </widget>
           </item>
@@ -124,7 +131,7 @@
      <x>0</x>
      <y>0</y>
      <width>796</width>
-     <height>20</height>
+     <height>25</height>
     </rect>
    </property>
   </widget>

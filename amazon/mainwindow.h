@@ -30,6 +30,8 @@ private slots:
 
     void on_pushButtonNewOrder_clicked();
 
+    void on_pushButtonRequestPackage_clicked();
+
 private:
     Ui::MainWindow *ui;
     class Floor *floorW;

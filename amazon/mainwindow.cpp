@@ -35,9 +35,11 @@ void MainWindow::on_pushButton_clicked()
 {
     initFloor(ui->spinBoxWidth->value(), ui->spinBoxHeight->value());
     floorW->setFloorSize(ui->spinBoxWidth->value(),ui->spinBoxHeight->value());
-    QPair<int,int> start(5,0);
-    floorW->initFloor(start);
+    QPair<int,int> start(0,5);
+    QPair<int,int> end(9,5);
+    floorW->initFloor(start, end);
     S->setStartTile(start);
+    S->setEndTile(end);
     //QSize s = floorW->getsize();
     floorW->addRobot(5,5);
     floorW->addRobot(6,6);
@@ -146,11 +148,24 @@ void MainWindow::on_buttonTakePackage_clicked()
 //        }
 //    }
     RS->moveRobots();
+
+    QVector<int> packages = S->updateShelves();
+    ui->comboBoxAvailablePackages->clear();
+    for (auto a: packages)
+    {
+        ui->comboBoxAvailablePackages->addItem(QString::number(a));
+    }
 }
 
 
 void MainWindow::on_pushButtonNewOrder_clicked()
 {
     S->checkForOrders();
+}
+
+void MainWindow::on_pushButtonRequestPackage_clicked()
+{
+    int pkgId = ui->comboBoxAvailablePackages->currentText().toInt();
+    S->packageRequested(pkgId);
 }
 
