@@ -37,6 +37,7 @@ int RobotSupervisor::chooseFreeRobot(QPair<int,int> r)
         busyRobots.insert(robotId,freeRobots[robotId]);
         freeRobots[robotId]->setStatus(false);
         freeRobots.remove(robotId);
+
     }
     else
         qDebug() << "no free robots";
@@ -47,7 +48,7 @@ QVector<QPair<int, int> > RobotSupervisor::findPath(QPair<int,int> p1, QPair<int
 {
     QVector<QVector<int>> grid;
     AStar path(floor->floorSize.first, floor->floorSize.second);
-    //floor->tiles[p1.first][p1.second]->changeTileStatus(TileStatus::empty);
+    floor->tiles[p1.first][p1.second]->changeTileStatus(TileStatus::empty);
     for (int i = 0; i < floor->floorSize.first; i++)
     {
         QVector<int> column;
@@ -64,25 +65,64 @@ QVector<QPair<int, int> > RobotSupervisor::findPath(QPair<int,int> p1, QPair<int
     ////
     ///
 
-    for (int i = 0; i < floor->floorSize.first; i++)
+    for (int j = 0; j < floor->floorSize.second; j++)
     {
         QDebug deb = qDebug();
-        for (int j = 0; j < floor->floorSize.second ; j++)
+        for (int i = 0; i < floor->floorSize.first ; i++)
         {
-            deb << grid[j][i];
+            deb << grid[i][j];
         }
         qDebug() << " ";
     }
-    //floor->tiles[p1.first][p1.second]->changeTileStatus(TileStatus::occupied);
     qDebug() << "start: " << p1.first << " " << p1.second << " end: " << p2.first << " " << p2.second;
     return path.trace;
+}
+
+void RobotSupervisor::collectThePackage(int robotId)
+{
+    Robot* r = busyRobots[robotId];
+    QVector<Shelf*> v;
+    for (auto &a: floor->shelves)
+    {
+        for (auto &b: a)
+        {
+            if(b->posX == r->order->posStart.first && b->posY == r->order->posStart.second)
+            {
+                if(b->isThereAPackage(r->order->pkgId))
+                {
+                        r->takePackage(b->removePackage(r->order->pkgId));
+                        qDebug() << "robot collected package number " << r->order->pkgId;
+                        return;
+                }
+                else
+                    qDebug() << "there is no such package on the shelf";
+            }
+            else
+                qDebug() << "there is no shelf";
+        }
+    }
+}
+
+void RobotSupervisor::leavePackage(int robotId)
+{
+    Robot* r = busyRobots[robotId];
+    for (auto &a: floor->shelves)
+    {
+        for (auto b: a)
+        {
+            if(b->posX == r->order->posEnd.first && b->posY == r->order->posEnd.second)
+            {
+                b->addPackage(r->leavePackage());
+            }
+        }
+    }
 }
 
 bool RobotSupervisor::sendRobot(Order* o)
 {
     QPair<int,int> destination;
-    qDebug() << "POLE KONCOWE: " << o->position.first << " " << o->position.second;
-    destination = determineEndField(o->position);
+    qDebug() << "POLE KONCOWE: " << o->posStart.first << " " << o->posStart.second;
+    destination = determineEndField(o->posStart);
     int robotId = chooseFreeRobot(destination);
     if (robotId != -1)
     {
@@ -110,12 +150,19 @@ void RobotSupervisor::moveRobots()
         //floor->tiles[busyRobots[a.key()]->getCurrentPosition().first][busyRobots[a.key()]->getCurrentPosition().second]->changeTileStatus(TileStatus::occupied);
         if(robotsPaths[a.key()].isEmpty())
         {
-            freeRobots.insert(a.key(), busyRobots[a.key()]);
-            busyRobots.remove(a.key());
-            finishedRobots.push_back(a.key());
-        }
-        if(busyRobots.contains(a.key()))
-            qDebug() << "id: " << a.key() << " -- " << busyRobots[a.key()]->posX << " " << busyRobots[a.key()]->posY;
+            if(!busyRobots[a.key()]->isBusy())
+            {
+                collectThePackage(a.key());
+                sendRobotId(a.key(), busyRobots[a.key()]->order->posEnd);
+            }
+            else
+            {
+                leavePackage(a.key());
+                freeRobots.insert(a.key(), busyRobots[a.key()]);
+                busyRobots.remove(a.key());
+                finishedRobots.push_back(a.key());
+            }
+        }        
     }
     for (auto a: finishedRobots)
     {
@@ -127,7 +174,10 @@ void RobotSupervisor::moveRobots()
     {
         for (auto c: busyRobots.keys())
         {
-            sendRobotId(c, busyRobots[c]->order->position);
+            if(!busyRobots[c]->isBusy())
+                sendRobotId(c, busyRobots[c]->order->posStart);
+            else
+                sendRobotId(c, busyRobots[c]->order->posEnd);
         }
     }
 }
@@ -152,10 +202,10 @@ void RobotSupervisor::robotsSynch()
 
 bool RobotSupervisor::sendRobotId(int id, QPair<int, int> d)
 {
-    robotsPaths.remove(id);
+    robotsPaths[id].clear();
     QPair<int,int> destination;
     destination = determineEndField(d);
-    robotsPaths.insert(id, findPath(busyRobots.find(id).value()->getCurrentPosition(),destination));
+    robotsPaths[id] = findPath(busyRobots.find(id).value()->getCurrentPosition(),destination);
     return true;
 }
 

@@ -36,8 +36,8 @@ void Floor::initFloor(QPair<int,int> startTile)
         {
             Tile *t = new Tile();
             column.push_back(t);
-            column.back()->setX(scale*j);
-            column.back()->setY(scale*i);
+            column.back()->setX(scale*i);
+            column.back()->setY(scale*j);
             column.back()->setScale(double(scale)/500);
             qDebug()<<t->x() << " " << t->y() << " " << t->scale();
 
@@ -47,7 +47,7 @@ void Floor::initFloor(QPair<int,int> startTile)
     }
     this->ui->graphicsView->fitInView(ui->graphicsView->rect(),Qt::KeepAspectRatio);
     initializeShelves();
-    tiles[startTile.second][startTile.first]->setPixmap(QPixmap(":/images/start_tile.png"));
+    tiles[startTile.first][startTile.second]->setPixmap(QPixmap(":/images/start_tile.png"));
 }
 
 QSize Floor::getsize()
@@ -99,7 +99,8 @@ void Floor::printShelves()
     qDebug() << "cat4";
     for (int i = 0; i < shelves[PackageType::cat4].size(); i++)
         qDebug() << shelves[PackageType::cat4][i]->posX << " " << shelves[PackageType::cat4][i]->posY;
-
+    for (int i = 0; i < shelves[PackageType::start].size(); i++)
+        qDebug() << shelves[PackageType::start][i]->posX << " " << shelves[PackageType::start][i]->posY;
 }
 
 void Floor::addNewPackage(Package* pkg)
@@ -123,5 +124,7 @@ void Floor::initializeShelves()
     shelves.insert(PackageType::cat3, v3);
     QVector<Shelf*> v4;
     shelves.insert(PackageType::cat4, v4);
+    QVector<Shelf*> v5;
+    shelves.insert(PackageType::start, v4);
 }
 

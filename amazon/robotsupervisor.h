@@ -16,6 +16,8 @@ public:
     int chooseFreeRobot(QPair<int,int>); // pozycja do ktorej bedzie jechal
     QVector<QPair<int,int>> findPath(QPair<int,int>, QPair<int,int>);
     class Floor* floor;
+    void collectThePackage(int);
+    void leavePackage(int);
     void moveRobots();
 public slots:
     bool sendRobot(Order*);

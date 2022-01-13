@@ -12,12 +12,13 @@ public:
     Floor* floor;
     void setStartTile(QPair<int,int>);
     void checkForOrders();
+private:
+    QPair<int,int> startTile;
+    QPair<int,int> findShelfForPackage(PackageType);
+    int numOfPackages = 0;
+    QQueue<Package*> packages;
 signals:
     void sendOrder(Order*);
-private:
-    QQueue<Package*> packages;
-    int numOfPackages = 0;
-    QPair<int,int> startTile;
 };
 
 #endif // SUPERVISOR_H

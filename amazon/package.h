@@ -23,7 +23,8 @@ enum class PackageStatus
 
 struct Order
 {
-    QPair<int,int> position;
+    QPair<int,int> posStart;
+    QPair<int,int> posEnd;
     int pkgId;
 };
 

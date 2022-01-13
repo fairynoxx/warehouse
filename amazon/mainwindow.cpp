@@ -53,6 +53,7 @@ void MainWindow::on_pushButton_clicked()
 //    RS->sendRobot(QPair<int,int>(1,8));
 //    RS->sendRobot(QPair<int,int>(9,9));
 //    RS->sendRobot(QPair<int,int>(0,9));
+    S->floor->printShelves();
 }
 
 
@@ -117,33 +118,33 @@ void MainWindow::checkForPackages(Robot * r)
 
 void MainWindow::on_buttonTakePackage_clicked()
 {
-    QVector<Shelf*> s = shelfNearRobot(floorW->robots[0]);
-    if (!s.isEmpty())
-    {
-        if (!floorW->robots[0]->isBusy())
-        {
-            for (auto a: s)
-            {
-                if(a->isThereAPackage(ui->comboBoxAvailablePackages->currentText().toInt()))
-                {
-                    floorW->robots[0]->takePackage(a->removePackage(ui->comboBoxAvailablePackages->currentText().toInt()));
-                    break;
-                }
-            }
-        }
-        else
-        {
-            for (auto a: s)
-            {
-                if(floorW->robots[0]->getPackageType() == a->getShelfType())
-                {
-                    a->addPackage(floorW->robots[0]->leavePackage());
-                    break;
-                }
-            }
+//    QVector<Shelf*> s = shelfNearRobot(floorW->robots[0]);
+//    if (!s.isEmpty())
+//    {
+//        if (!floorW->robots[0]->isBusy())
+//        {
+//            for (auto a: s)
+//            {
+//                if(a->isThereAPackage(ui->comboBoxAvailablePackages->currentText().toInt()))
+//                {
+//                    floorW->robots[0]->takePackage(a->removePackage(ui->comboBoxAvailablePackages->currentText().toInt()));
+//                    break;
+//                }
+//            }
+//        }
+//        else
+//        {
+//            for (auto a: s)
+//            {
+//                if(floorW->robots[0]->getPackageType() == a->getShelfType())
+//                {
+//                    a->addPackage(floorW->robots[0]->leavePackage());
+//                    break;
+//                }
+//            }
 
-        }
-    }
+//        }
+//    }
     RS->moveRobots();
 }
 
