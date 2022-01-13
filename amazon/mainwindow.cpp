@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 #include "qmessagebox.h"
 #include "floor.h"
+#include <QScrollBar>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -57,8 +58,16 @@ void MainWindow::on_pushButton_clicked()
 //    RS->sendRobot(QPair<int,int>(0,9));
     S->floor->printShelves();
     timer = new QTimer(this);
+    newPkgTimer = new QTimer(this);
+    newOrderTimer = new QTimer(this);
+
     connect(timer, SIGNAL(timeout()), this, SLOT(on_buttonTakePackage_clicked()));
+    connect(newPkgTimer, SIGNAL(timeout()), this, SLOT(new_package()));
+    connect(newOrderTimer, SIGNAL(timeout()), this, SLOT(new_order()));
+
     timer->start(1000);
+    newPkgTimer->start(5000);
+    newOrderTimer->start(5000);
 }
 
 
@@ -170,5 +179,61 @@ void MainWindow::on_pushButtonRequestPackage_clicked()
 {
     int pkgId = ui->comboBoxAvailablePackages->currentText().toInt();
     S->packageRequested(pkgId);
+}
+
+void MainWindow::new_order()
+{
+    int availablePackages = ui->comboBoxAvailablePackages->count();
+    QString text = "kupa:"+QString::number(availablePackages);
+    ui->logWindow->appendPlainText(text);
+    ui->logWindow->verticalScrollBar()->setValue(ui->logWindow->verticalScrollBar()->maximum());
+
+    if (availablePackages == 0)
+        return;
+    int pkgId = ui->comboBoxAvailablePackages->itemData(rand()%availablePackages).toString().toInt();
+    int kupa = ui->comboBoxAvailablePackages->findData(pkgId);
+
+    //copy-paste from above
+    QVector<int> packages = S->updateShelves();
+    ui->comboBoxAvailablePackages->clear();
+    for (auto a: packages)
+    {
+        ui->comboBoxAvailablePackages->addItem(QString::number(a));
+    }
+//    ui->comboBoxAvailablePackages->removeItem(ui->comboBoxAvailablePackages->findData(pkgId));
+    text = "created new request for package id:"+QString::number(pkgId)+QString::number(kupa);
+    ui->logWindow->appendPlainText(text);
+    ui->logWindow->verticalScrollBar()->setValue(ui->logWindow->verticalScrollBar()->maximum());
+
+    S->packageRequested(pkgId);
+}
+
+void MainWindow::new_package()
+{
+    PackageType t;
+    switch (rand()%4) {
+    case 0:
+        t = PackageType::cat1;
+        break;
+    case 1:
+        t = PackageType::cat2;
+        break;
+    case 2:
+        t = PackageType::cat3;
+        break;
+    case 3:
+        t = PackageType::cat4;
+        break;
+    default:
+        t = PackageType::cat1;
+        break;
+    }
+    QString text = "created new package of category:"+QString::number(static_cast<int>(t));
+    ui->logWindow->appendPlainText(text);
+    ui->logWindow->verticalScrollBar()->setValue(ui->logWindow->verticalScrollBar()->maximum());
+    S->addPackage(t);
+
+    S->checkForOrders();
+
 }
 

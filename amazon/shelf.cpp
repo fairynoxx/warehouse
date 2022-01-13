@@ -57,10 +57,17 @@ void Shelf::addPackage(Package *pkg)
 {
     packages.insert(pkg->id, pkg);
     pkg->changeStatus(PackageStatus::delivered);
-    if (packages.size() == MAX_PKGS)
-        isFull = true;
-    if (isEmpty)
-        isEmpty = false;
+    if (getShelfType()==PackageType::start)
+    {
+        isFull = false;
+    }
+    else
+    {
+        if (packages.size() == MAX_PKGS)
+            isFull = true;
+        if (isEmpty)
+            isEmpty = false;
+    }
     setImage();
 }
 

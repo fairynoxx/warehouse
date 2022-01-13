@@ -33,6 +33,9 @@ private slots:
 
     void on_pushButtonRequestPackage_clicked();
 
+    void new_order();
+
+    void new_package();
 private:
     Ui::MainWindow *ui;
     class Floor *floorW;
@@ -42,5 +45,8 @@ private:
     QVector<Shelf*> shelfNearRobot(Robot*);
     void checkForPackages(Robot*);
     QTimer * timer;
+    QTimer * newPkgTimer;
+    QTimer * newOrderTimer;
+
 };
 #endif // MAINWINDOW_H
