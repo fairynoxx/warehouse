@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QTimer>
 #include "floor.h"
 #include "shelf.h"
 #include "robotsupervisor.h"
@@ -40,5 +41,6 @@ private:
     int numOfPackages = 0;
     QVector<Shelf*> shelfNearRobot(Robot*);
     void checkForPackages(Robot*);
+    QTimer * timer;
 };
 #endif // MAINWINDOW_H

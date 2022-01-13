@@ -56,6 +56,9 @@ void MainWindow::on_pushButton_clicked()
 //    RS->sendRobot(QPair<int,int>(9,9));
 //    RS->sendRobot(QPair<int,int>(0,9));
     S->floor->printShelves();
+    timer = new QTimer(this);
+    connect(timer, SIGNAL(timeout()), this, SLOT(on_buttonTakePackage_clicked()));
+    timer->start(1000);
 }
 
 
