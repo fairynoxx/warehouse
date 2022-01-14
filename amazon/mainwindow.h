@@ -36,6 +36,8 @@ private slots:
     void new_order();
 
     void new_package();
+
+    void check_orders();
 private:
     Ui::MainWindow *ui;
     class Floor *floorW;
@@ -47,6 +49,6 @@ private:
     QTimer * timer;
     QTimer * newPkgTimer;
     QTimer * newOrderTimer;
-
+    QTimer * checkPackagesTimer;
 };
 #endif // MAINWINDOW_H

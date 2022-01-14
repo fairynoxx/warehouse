@@ -67,14 +67,17 @@ void MainWindow::on_pushButton_clicked()
     timer = new QTimer(this);
     newPkgTimer = new QTimer(this);
     newOrderTimer = new QTimer(this);
+    checkPackagesTimer = new QTimer(this);
 
     connect(timer, SIGNAL(timeout()), this, SLOT(on_buttonTakePackage_clicked()));
     connect(newPkgTimer, SIGNAL(timeout()), this, SLOT(new_package()));
     connect(newOrderTimer, SIGNAL(timeout()), this, SLOT(new_order()));
+    connect(checkPackagesTimer, SIGNAL(timeout()), this, SLOT(check_orders()));
 
     timer->start(1000);
     newPkgTimer->start(5000);
     newOrderTimer->start(10000);
+    checkPackagesTimer->start(1000);
 }
 
 
@@ -234,6 +237,11 @@ void MainWindow::new_package()
     ui->logWindow->verticalScrollBar()->setValue(ui->logWindow->verticalScrollBar()->maximum());
     S->addPackage(t);
 
+
+}
+
+void MainWindow::check_orders()
+{
     S->checkForOrders();
 
 }
