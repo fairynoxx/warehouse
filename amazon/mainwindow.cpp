@@ -45,9 +45,16 @@ void MainWindow::on_pushButton_clicked()
     floorW->addRobot(5,5);
     floorW->addRobot(6,6);
     floorW->addRobot(7,7);
+    floorW->addRobot(8,8);
+    floorW->addRobot(0,7);
+    floorW->addRobot(0,6);
     RS->addRobot(floorW->robots[0]);
     RS->addRobot(floorW->robots[1]);
     RS->addRobot(floorW->robots[2]);
+    RS->addRobot(floorW->robots[3]);
+    RS->addRobot(floorW->robots[4]);
+    RS->addRobot(floorW->robots[5]);
+
     S->addShelf(1,1,PackageType::cat1);
     S->addShelf(4,4,PackageType::cat2);
     S->addShelf(9,8,PackageType::cat2);
@@ -67,7 +74,7 @@ void MainWindow::on_pushButton_clicked()
 
     timer->start(1000);
     newPkgTimer->start(5000);
-    newOrderTimer->start(5000);
+    newOrderTimer->start(10000);
 }
 
 
@@ -165,7 +172,7 @@ void MainWindow::on_buttonTakePackage_clicked()
     ui->comboBoxAvailablePackages->clear();
     for (auto a: packages)
     {
-        ui->comboBoxAvailablePackages->addItem(QString::number(a));
+        ui->comboBoxAvailablePackages->addItem(QString::number(a),a);
     }
 }
 
@@ -184,24 +191,18 @@ void MainWindow::on_pushButtonRequestPackage_clicked()
 void MainWindow::new_order()
 {
     int availablePackages = ui->comboBoxAvailablePackages->count();
-    QString text = "kupa:"+QString::number(availablePackages);
+    QString text = "available packages:"+QString::number(availablePackages);
     ui->logWindow->appendPlainText(text);
     ui->logWindow->verticalScrollBar()->setValue(ui->logWindow->verticalScrollBar()->maximum());
 
     if (availablePackages == 0)
         return;
-    int pkgId = ui->comboBoxAvailablePackages->itemData(rand()%availablePackages).toString().toInt();
+    int randindex=rand()%availablePackages;
+    int pkgId = ui->comboBoxAvailablePackages->itemData(randindex).toInt();
     int kupa = ui->comboBoxAvailablePackages->findData(pkgId);
 
-    //copy-paste from above
-    QVector<int> packages = S->updateShelves();
-    ui->comboBoxAvailablePackages->clear();
-    for (auto a: packages)
-    {
-        ui->comboBoxAvailablePackages->addItem(QString::number(a));
-    }
 //    ui->comboBoxAvailablePackages->removeItem(ui->comboBoxAvailablePackages->findData(pkgId));
-    text = "created new request for package id:"+QString::number(pkgId)+QString::number(kupa);
+    text = "created new request for package id:"+QString::number(pkgId)+" pos:"+QString::number(kupa)+ " randId:"+QString::number(randindex) ;
     ui->logWindow->appendPlainText(text);
     ui->logWindow->verticalScrollBar()->setValue(ui->logWindow->verticalScrollBar()->maximum());
 
