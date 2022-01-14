@@ -23,6 +23,7 @@ public slots:
     bool sendRobot(Order*);
 private:
     int numOfRobots = 0;
+
     QMap<int, Robot*> freeRobots;
     QMap<int, Robot*> busyRobots;
     QMap<int, QVector<QPair<int,int>>> robotsPaths;

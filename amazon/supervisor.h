@@ -15,7 +15,7 @@ public:
     /**
      * creates new package
      */
-    void addPackage(PackageType);
+    int addPackage(PackageType);
     Floor* floor;
     /**
      * sets start shelf of the warehouse
@@ -30,7 +30,7 @@ public:
     /**
      * checks if there are new packages waiting and prepares an order
      */
-    void checkForOrders();
+    int checkForOrders();
 
     /**
      * prepares an order for requested package

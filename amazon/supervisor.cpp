@@ -10,11 +10,12 @@ void Supervisor::addShelf(int x, int y, PackageType type)
     floor->addShelf(x, y, type);
 }
 
-void Supervisor::addPackage(PackageType type)
+int Supervisor::addPackage(PackageType type)
 {
     Package* pkg = new Package(numOfPackages, type);
     numOfPackages++;
     packages.enqueue(pkg);
+    return numOfPackages-1;
     //floor->shelves[PackageType::start][0]->addPackage(pkg);
 }
 
@@ -31,7 +32,7 @@ void Supervisor::setEndTile(QPair<int, int> p)
     floor->addShelf(p.first, p.second, PackageType::end);
 }
 
-void Supervisor::checkForOrders()
+int Supervisor::checkForOrders()
 {
     if(!packages.isEmpty())
     {
@@ -42,7 +43,9 @@ void Supervisor::checkForOrders()
         o->posEnd = findShelfForPackage(o->pkgId, packages.front()->getPackageType());
         packages.pop_front();
         emit sendOrder(o);
+        return o->pkgId;
     }
+    return -1;
 }
 
 void Supervisor::packageRequested(int pkgId)

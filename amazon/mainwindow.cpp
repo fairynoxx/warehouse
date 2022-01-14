@@ -191,24 +191,49 @@ void MainWindow::on_pushButtonRequestPackage_clicked()
     S->packageRequested(pkgId);
 }
 
+void MainWindow::updateLogs()
+{
+    ui->logWindowMag->clear();
+    ui->logWindowStart->clear();
+    ui->logWindowsEnd->clear();
+
+
+    for(auto a: startList)
+    {
+        ui->logWindowStart->appendPlainText(QString::number(a));
+    }
+    for(auto a: magList)
+    {
+        ui->logWindowMag->appendPlainText(QString::number(a));
+    }
+    for(auto a: endList)
+    {
+        ui->logWindowsEnd->appendPlainText(QString::number(a));
+    }
+    ui->logWindowStart->verticalScrollBar()->setValue(ui->logWindowStart->verticalScrollBar()->maximum());
+    ui->logWindowMag->verticalScrollBar()->setValue(ui->logWindowMag->verticalScrollBar()->maximum());
+    ui->logWindowsEnd->verticalScrollBar()->setValue(ui->logWindowsEnd->verticalScrollBar()->maximum());
+
+}
 void MainWindow::new_order()
 {
     int availablePackages = ui->comboBoxAvailablePackages->count();
-    QString text = "available packages:"+QString::number(availablePackages);
-    ui->logWindow->appendPlainText(text);
-    ui->logWindow->verticalScrollBar()->setValue(ui->logWindow->verticalScrollBar()->maximum());
+//    QString text = "available packages:"+QString::number(availablePackages);
+//    ui->logWindow->appendPlainText(text);
+//    ui->logWindow->verticalScrollBar()->setValue(ui->logWindow->verticalScrollBar()->maximum());
 
     if (availablePackages == 0)
         return;
     int randindex=rand()%availablePackages;
     int pkgId = ui->comboBoxAvailablePackages->itemData(randindex).toInt();
-    int kupa = ui->comboBoxAvailablePackages->findData(pkgId);
+//    int kupa = ui->comboBoxAvailablePackages->findData(pkgId);
 
 //    ui->comboBoxAvailablePackages->removeItem(ui->comboBoxAvailablePackages->findData(pkgId));
-    text = "created new request for package id:"+QString::number(pkgId)+" pos:"+QString::number(kupa)+ " randId:"+QString::number(randindex) ;
-    ui->logWindow->appendPlainText(text);
-    ui->logWindow->verticalScrollBar()->setValue(ui->logWindow->verticalScrollBar()->maximum());
-
+//    text = "created new request for package id:"+QString::number(pkgId)+" pos:"+QString::number(kupa)+ " randId:"+QString::number(randindex) ;
+//    ui->logWindow->appendPlainText(text);
+//    ui->logWindow->verticalScrollBar()->setValue(ui->logWindow->verticalScrollBar()->maximum());
+    endList.append(pkgId);
+//    magList.remove(pkgId);
     S->packageRequested(pkgId);
 }
 
@@ -232,17 +257,22 @@ void MainWindow::new_package()
         t = PackageType::cat1;
         break;
     }
-    QString text = "created new package of category:"+QString::number(static_cast<int>(t));
-    ui->logWindow->appendPlainText(text);
-    ui->logWindow->verticalScrollBar()->setValue(ui->logWindow->verticalScrollBar()->maximum());
-    S->addPackage(t);
+//    QString text = "created new package of category:"+QString::number(static_cast<int>(t));
+//    ui->logWindow->appendPlainText(text);
+//    ui->logWindow->verticalScrollBar()->setValue(ui->logWindow->verticalScrollBar()->maximum());
+    startList.append(S->addPackage(t));
 
 
 }
 
 void MainWindow::check_orders()
 {
-    S->checkForOrders();
-
+    updateLogs();
+    int res = S->checkForOrders();
+    if (res != -1)
+    {
+     //   startList.remove(res);
+        magList.append(res);
+    }
 }
 

@@ -50,5 +50,9 @@ private:
     QTimer * newPkgTimer;
     QTimer * newOrderTimer;
     QTimer * checkPackagesTimer;
+    void updateLogs();
+    QList<int> startList;
+    QList<int> magList;
+    QList<int> endList;
 };
 #endif // MAINWINDOW_H
