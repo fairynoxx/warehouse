@@ -30,7 +30,7 @@ public:
     /**
      * checks if there are new packages waiting and prepares an order
      */
-    int checkForOrders();
+    void checkForOrders();
 
     /**
      * prepares an order for requested package
@@ -41,6 +41,11 @@ public:
      *  gives the IDs of all packages on shelves (excluding start and end)
      */
     QVector<int> updateShelves();
+
+    /**
+     *  gives vector of all available packages on shelves
+     */
+    QVector<int> getPackagesOnShelves();
 private:
     QPair<int,int> startTile;
     QPair<int,int> endTile;
@@ -57,8 +62,13 @@ private:
     QPair<int,int> findShelfForPackage(int,PackageType);
     int numOfPackages = 0;
     QQueue<Package*> packages;
+    QMap<int,Package*> allPackages;
+public slots:
+    void cancelOrder(Order*);
+    void orderCompleted(Order*);
 signals:
     void sendOrder(Order*);
+    void updateLogs(int,PackageType); // 0 for normal shelf, 1 for end shelf
 };
 
 #endif // SUPERVISOR_H

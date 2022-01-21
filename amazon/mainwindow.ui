@@ -73,48 +73,6 @@
           </item>
          </layout>
         </item>
-        <item>
-         <layout class="QGridLayout" name="gridLayout_2">
-          <item row="1" column="1">
-           <widget class="QPushButton" name="buttonTakePackage">
-            <property name="text">
-             <string>Perform one step</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="0">
-           <widget class="QComboBox" name="comboBoxPackageType"/>
-          </item>
-          <item row="0" column="1">
-           <widget class="QPushButton" name="pushButtonCreatePackage">
-            <property name="text">
-             <string>Create Package</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="0">
-           <widget class="QComboBox" name="comboBoxAvailablePackages">
-            <property name="sizeAdjustPolicy">
-             <enum>QComboBox::AdjustToContents</enum>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0">
-           <widget class="QPushButton" name="pushButtonNewOrder">
-            <property name="text">
-             <string>New Order</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="1">
-           <widget class="QPushButton" name="pushButtonRequestPackage">
-            <property name="text">
-             <string>Request a package</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
        </layout>
       </item>
      </layout>

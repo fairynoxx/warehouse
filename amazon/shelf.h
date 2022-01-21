@@ -28,10 +28,12 @@ public:
     Package* removePackage(int id);
     bool isShelfFull();
     bool isShelfEmpty();
-    QVector<Package*> availablePackages();
+    QVector<Package*> getAllPackages();
+    QVector<int> getAvailablePackages();
     PackageType getShelfType();
     bool isThereAPackage(int);
     QPair<int,int> getShelfPosition();
+    void changePackageStatus(int, PackageStatus);
 signals:
 
 };

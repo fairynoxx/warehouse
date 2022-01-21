@@ -37,12 +37,14 @@ public:
 private:
     PackageStatus status;
     PackageType type;
+    int id;
 public:
     //// TODO MOVE TO PRIVATE, ADD METHOD
-    int id;
     ////
     void changeStatus(PackageStatus);
     PackageType getPackageType();
+    PackageStatus getPackageStatus();
+    int getPackageId();
 };
 
 #endif // PACKAGE_H

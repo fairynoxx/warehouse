@@ -55,7 +55,7 @@ void Shelf::setImage()
 
 void Shelf::addPackage(Package *pkg)
 {
-    packages.insert(pkg->id, pkg);
+    packages.insert(pkg->getPackageId(), pkg);
     pkg->changeStatus(PackageStatus::delivered);
     if (getShelfType()==PackageType::start)
     {
@@ -93,12 +93,22 @@ bool Shelf::isShelfEmpty()
     return isEmpty;
 }
 
-QVector<Package*> Shelf::availablePackages()
+QVector<Package*> Shelf::getAllPackages()
 {
     QVector<Package*> v;
     QList<Package*> l = packages.values();
     for (auto a: l)
         v.push_back(a);
+    return v;
+}
+
+QVector<int> Shelf::getAvailablePackages()
+{
+    QVector<int> v;
+    QList<Package*> l = packages.values();
+    for (auto a: l)
+        if(a->getPackageStatus() == PackageStatus::delivered)
+            v.push_back(a->getPackageId());
     return v;
 }
 
@@ -117,4 +127,9 @@ bool Shelf::isThereAPackage(int id)
 QPair<int, int> Shelf::getShelfPosition()
 {
     return QPair<int,int>(posX,posY);
+}
+
+void Shelf::changePackageStatus(int id, PackageStatus status)
+{
+    packages[id]->changeStatus(status);
 }

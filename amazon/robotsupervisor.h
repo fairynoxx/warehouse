@@ -20,10 +20,12 @@ public:
     void leavePackage(int);
     void moveRobots();
 public slots:
-    bool sendRobot(Order*);
+    void sendRobot(Order*);
+signals:
+    void orderNotAccepted(Order*);
+    void packageLeftOnShelf(Order*);
 private:
     int numOfRobots = 0;
-
     QMap<int, Robot*> freeRobots;
     QMap<int, Robot*> busyRobots;
     QMap<int, QVector<QPair<int,int>>> robotsPaths;

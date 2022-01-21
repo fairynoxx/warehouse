@@ -22,6 +22,11 @@ int RobotSupervisor::chooseFreeRobot(QPair<int,int> r)
     QPair<int,int> pos;
     int distance = 1000;
     int robotId = -1;
+    if (freeRobots.isEmpty())
+    {
+        qDebug() << "no free robots";
+        return -1;
+    }
     auto end = freeRobots.cend();
     for (auto a = freeRobots.cbegin(); a != end; ++a)
     {
@@ -32,15 +37,9 @@ int RobotSupervisor::chooseFreeRobot(QPair<int,int> r)
             robotId = a.key();
         }
     }
-    if(robotId != -1)
-    {
-        busyRobots.insert(robotId,freeRobots[robotId]);
-        freeRobots[robotId]->setStatus(false);
-        freeRobots.remove(robotId);
-
-    }
-    else
-        qDebug() << "no free robots";
+    busyRobots.insert(robotId,freeRobots[robotId]);
+    freeRobots[robotId]->setStatus(false);
+    freeRobots.remove(robotId);
     return robotId;
 }
 
@@ -67,14 +66,14 @@ QVector<QPair<int, int> > RobotSupervisor::findPath(QPair<int,int> p1, QPair<int
 
     for (int j = 0; j < floor->floorSize.second; j++)
     {
-        QDebug deb = qDebug();
+        //QDebug deb //= qDebug();
         for (int i = 0; i < floor->floorSize.first ; i++)
         {
-            deb << grid[i][j];
+            //deb << grid[i][j];
         }
-        qDebug() << " ";
+        //qDebug() << " ";
     }
-    qDebug() << "start: " << p1.first << " " << p1.second << " end: " << p2.first << " " << p2.second;
+    //qDebug() << "start: " << p1.first << " " << p1.second << " end: " << p2.first << " " << p2.second;
     return path.trace;
 }
 
@@ -91,16 +90,16 @@ void RobotSupervisor::collectThePackage(int robotId)
                 if(b->isThereAPackage(r->order->pkgId))
                 {
                         r->takePackage(b->removePackage(r->order->pkgId));
-                        qDebug() << "robot collected package number " << r->order->pkgId;
+                        r->pkg->changeStatus(PackageStatus::onTheWay);
+                        //qDebug() << "robot collected package number " << r->order->pkgId;
                         return;
                 }
                 else
                     qDebug() << "there is no such package on the shelf";
             }
-            else
-                qDebug() << "there is no shelf";
         }
     }
+    qDebug() << "there is no shelf";
 }
 
 void RobotSupervisor::leavePackage(int robotId)
@@ -112,25 +111,28 @@ void RobotSupervisor::leavePackage(int robotId)
         {
             if(b->posX == r->order->posEnd.first && b->posY == r->order->posEnd.second)
             {
+                r->pkg->changeStatus(PackageStatus::delivered);
+                emit packageLeftOnShelf(r->order);
                 b->addPackage(r->leavePackage());
+                return;
             }
         }
     }
 }
 
-bool RobotSupervisor::sendRobot(Order* o)
+void RobotSupervisor::sendRobot(Order* o)
 {
     QPair<int,int> destination;
-    qDebug() << "POLE KONCOWE: " << o->posStart.first << " " << o->posStart.second;
+    //qDebug() << "POLE KONCOWE: " << o->posStart.first << " " << o->posStart.second;
     destination = determineEndField(o->posStart);
     int robotId = chooseFreeRobot(destination);
     if (robotId != -1)
     {
         busyRobots[robotId]->assignOrder(o);
         robotsPaths.insert(robotId, findPath(busyRobots.find(robotId).value()->getCurrentPosition(),destination));
-        return true;
+        return;
     }
-    return false;
+    emit orderNotAccepted(o);
 }
 
 void RobotSupervisor::moveRobots()
@@ -194,6 +196,7 @@ void RobotSupervisor::robotsSynch()
                if(robotsPaths[a.key()][0] == robotsPaths[b.key()][0])
                {
                    robotsPaths[b.key()].emplaceFront(busyRobots[b.key()]->getCurrentPosition());
+                   qDebug() << "COLLISION " << busyRobots[a.key()]->posX << busyRobots[a.key()]->posY << " and " << busyRobots[b.key()]->posX << " " << busyRobots[b.key()]->posY;
                }
            }
        }
@@ -219,6 +222,7 @@ void RobotSupervisor::updateFieldsState()
 
 QPair<int, int> RobotSupervisor::determineEndField(QPair<int, int> shelfPos)
 {
+    QVector<QPair<int,int>> v;
     for(int i = shelfPos.first - 1; i <= shelfPos.first + 1; i++)
     {
         for(int j = shelfPos.second - 1; j <= shelfPos.second + 1; j++)
@@ -228,16 +232,17 @@ QPair<int, int> RobotSupervisor::determineEndField(QPair<int, int> shelfPos)
                 if(i != shelfPos.first)
                 {
                     if(j == shelfPos.second && floor->tiles[i][j]->status == TileStatus::empty)
-                        return QPair<int,int>(i,j);
+                        v.push_back(QPair<int,int>(i,j));
                 }
                 if(j != shelfPos.second)
                 {
                     if(i == shelfPos.first && floor->tiles[i][j]->status == TileStatus::empty)
-                        return QPair<int,int>(i,j);
+                        v.push_back(QPair<int,int>(i,j));
                 }
             }
         }
     }
+    return v[rand()%v.size()];
 }
 
 

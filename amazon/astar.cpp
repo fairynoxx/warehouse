@@ -39,7 +39,7 @@ public:
 
     ~AStar()
     {
-        qDebug() << "oboze umieram";
+        //qDebug() << "oboze umieram";
     }
     bool isValid(int row, int col)
     {
@@ -106,7 +106,7 @@ public:
         }
         trace.pop_front();
         for (auto a: trace)
-            qDebug() << "-> (" <<  a.first << ", " <<  a.second << ")";
+            //qDebug() << "-> (" <<  a.first << ", " <<  a.second << ")";
         return;
     }
 
@@ -124,7 +124,7 @@ public:
 
         // If the destination is out of range
         if (isValid(dest.first, dest.second) == false) {
-            qDebug() << "Destination is invalid\n";
+            //qDebug() << "Destination is invalid\n";
             return;
         }
 
@@ -238,7 +238,7 @@ public:
                     // Set the Parent of the destination cell
                     cellDetails[i - 1][j].parent_i = i;
                     cellDetails[i - 1][j].parent_j = j;
-                    qDebug() << "The destination cell is found\n";
+                    //qDebug() << "The destination cell is found\n";
                     tracePath(cellDetails, dest);
                     foundDest = true;
                     return;

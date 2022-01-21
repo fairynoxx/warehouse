@@ -24,10 +24,10 @@ private:
     void rotateRobot(Direction);
     int getRotations(Direction);
     bool isDirectionOpposite(Direction);
-    Package* pkg;
     void updateImgRotation();
     bool arrived = false;
 public:
+    Package* pkg;
     //// MOVE TO PRIVATE
     int posX;
     int posY;

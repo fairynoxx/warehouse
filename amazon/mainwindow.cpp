@@ -9,13 +9,12 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    ui->comboBoxPackageType->addItem("category 1");
-    ui->comboBoxPackageType->addItem("category 2");
-    ui->comboBoxPackageType->addItem("category 3");
-    ui->comboBoxPackageType->addItem("category 4");
     RS = new RobotSupervisor;
     S = new Supervisor;
     connect(S, &Supervisor::sendOrder, RS, &RobotSupervisor::sendRobot);
+    connect(RS, &RobotSupervisor::orderNotAccepted, S, &Supervisor::cancelOrder);
+    connect(RS, &RobotSupervisor::packageLeftOnShelf, S, &Supervisor::orderCompleted);
+    connect(S, &Supervisor::updateLogs, this, &MainWindow::updateLogs);
 }
 
 MainWindow::~MainWindow()
@@ -63,140 +62,46 @@ void MainWindow::on_pushButton_clicked()
 //    RS->sendRobot(QPair<int,int>(1,8));
 //    RS->sendRobot(QPair<int,int>(9,9));
 //    RS->sendRobot(QPair<int,int>(0,9));
-    S->floor->printShelves();
+//    S->floor->printShelves();
     timer = new QTimer(this);
     newPkgTimer = new QTimer(this);
     newOrderTimer = new QTimer(this);
     checkPackagesTimer = new QTimer(this);
 
-    connect(timer, SIGNAL(timeout()), this, SLOT(on_buttonTakePackage_clicked()));
-    connect(newPkgTimer, SIGNAL(timeout()), this, SLOT(new_package()));
-    connect(newOrderTimer, SIGNAL(timeout()), this, SLOT(new_order()));
-    connect(checkPackagesTimer, SIGNAL(timeout()), this, SLOT(check_orders()));
+    connect(timer, SIGNAL(timeout()), this, SLOT(makeStep()));
+    connect(newPkgTimer, SIGNAL(timeout()), this, SLOT(newPackage()));
+    connect(newOrderTimer, SIGNAL(timeout()), this, SLOT(newOrder()));
+    connect(checkPackagesTimer, SIGNAL(timeout()), this, SLOT(checkOrders()));
 
-    timer->start(1000);
-    newPkgTimer->start(5000);
+    timer->start(100);
+    newPkgTimer->start(500);
     newOrderTimer->start(10000);
-    checkPackagesTimer->start(1000);
+    checkPackagesTimer->start(100);
 }
 
-
-void MainWindow::on_pushButtonCreatePackage_clicked()
+void MainWindow::makeStep()
 {
-    PackageType t;
-    switch (ui->comboBoxPackageType->currentIndex()) {
-    case 0:
-        t = PackageType::cat1;
-        break;
-    case 1:
-        t = PackageType::cat2;
-        break;
-    case 2:
-        t = PackageType::cat3;
-        break;
-    case 3:
-        t = PackageType::cat4;
-        break;
-    default:
-        t = PackageType::cat1;
-        break;
-    }
-    S->addPackage(t);
-}
-
-QVector<Shelf*> MainWindow::shelfNearRobot(Robot * r)
-{
-    QVector<Shelf*> v;
-    for (auto &a: floorW->shelves)
-    {
-        for (auto b: a)
-        {
-            if (r->posX == b->posX)
-                if (b->posY == r->posY - 1 || b->posY == r->posY + 1)
-                    v.push_back(b);
-            if (r->posY == b->posY)
-                if (b->posX == r->posX - 1 || b->posX == r->posX + 1)
-                    v.push_back(b);
-        }
-    }
-    return v;
-}
-
-void MainWindow::checkForPackages(Robot * r)
-{
-    QVector<Shelf*> s = shelfNearRobot(r);
-    ui->comboBoxAvailablePackages->clear();
-    if (!s.isEmpty())
-    {
-        QVector<Package*> v;
-        for (auto a: s)
-        {
-            v = floorW->availablePackages(a);
-            for (auto b: v)
-            {
-                ui->comboBoxAvailablePackages->addItem(QString::number(b->id));
-            }
-        }
-    }
-}
-
-void MainWindow::on_buttonTakePackage_clicked()
-{
-//    QVector<Shelf*> s = shelfNearRobot(floorW->robots[0]);
-//    if (!s.isEmpty())
-//    {
-//        if (!floorW->robots[0]->isBusy())
-//        {
-//            for (auto a: s)
-//            {
-//                if(a->isThereAPackage(ui->comboBoxAvailablePackages->currentText().toInt()))
-//                {
-//                    floorW->robots[0]->takePackage(a->removePackage(ui->comboBoxAvailablePackages->currentText().toInt()));
-//                    break;
-//                }
-//            }
-//        }
-//        else
-//        {
-//            for (auto a: s)
-//            {
-//                if(floorW->robots[0]->getPackageType() == a->getShelfType())
-//                {
-//                    a->addPackage(floorW->robots[0]->leavePackage());
-//                    break;
-//                }
-//            }
-
-//        }
-//    }
     RS->moveRobots();
-
-    QVector<int> packages = S->updateShelves();
-    ui->comboBoxAvailablePackages->clear();
-    for (auto a: packages)
-    {
-        ui->comboBoxAvailablePackages->addItem(QString::number(a),a);
-    }
 }
 
-
-void MainWindow::on_pushButtonNewOrder_clicked()
-{
-    S->checkForOrders();
-}
-
-void MainWindow::on_pushButtonRequestPackage_clicked()
-{
-    int pkgId = ui->comboBoxAvailablePackages->currentText().toInt();
-    S->packageRequested(pkgId);
-}
-
-void MainWindow::updateLogs()
+void MainWindow::updateLogs(int id, PackageType type)
 {
     ui->logWindowMag->clear();
     ui->logWindowStart->clear();
     ui->logWindowsEnd->clear();
-
+    switch (type) {
+    case PackageType::start:
+        startList.append(id);
+        break;
+    case PackageType::end:
+        endList.append(id);
+        magList.removeOne(id);
+        break;
+    default:
+        magList.append(id);
+        startList.removeOne(id);
+        break;
+    }
 
     for(auto a: startList)
     {
@@ -215,29 +120,20 @@ void MainWindow::updateLogs()
     ui->logWindowsEnd->verticalScrollBar()->setValue(ui->logWindowsEnd->verticalScrollBar()->maximum());
 
 }
-void MainWindow::new_order()
+// new order for taking package from the shelf
+
+void MainWindow::newOrder()
 {
-    int availablePackages = ui->comboBoxAvailablePackages->count();
-//    QString text = "available packages:"+QString::number(availablePackages);
-//    ui->logWindow->appendPlainText(text);
-//    ui->logWindow->verticalScrollBar()->setValue(ui->logWindow->verticalScrollBar()->maximum());
-
-    if (availablePackages == 0)
+    QVector<int> packages = S->getPackagesOnShelves();
+    numOfPackages = packages.size();
+    if(numOfPackages == 0)
         return;
-    int randindex=rand()%availablePackages;
-    int pkgId = ui->comboBoxAvailablePackages->itemData(randindex).toInt();
-//    int kupa = ui->comboBoxAvailablePackages->findData(pkgId);
+    int chosenPackage = rand() % numOfPackages;
+    S->packageRequested(packages[chosenPackage]);
 
-//    ui->comboBoxAvailablePackages->removeItem(ui->comboBoxAvailablePackages->findData(pkgId));
-//    text = "created new request for package id:"+QString::number(pkgId)+" pos:"+QString::number(kupa)+ " randId:"+QString::number(randindex) ;
-//    ui->logWindow->appendPlainText(text);
-//    ui->logWindow->verticalScrollBar()->setValue(ui->logWindow->verticalScrollBar()->maximum());
-    endList.append(pkgId);
-//    magList.remove(pkgId);
-    S->packageRequested(pkgId);
 }
 
-void MainWindow::new_package()
+void MainWindow::newPackage()
 {
     PackageType t;
     switch (rand()%4) {
@@ -260,19 +156,13 @@ void MainWindow::new_package()
 //    QString text = "created new package of category:"+QString::number(static_cast<int>(t));
 //    ui->logWindow->appendPlainText(text);
 //    ui->logWindow->verticalScrollBar()->setValue(ui->logWindow->verticalScrollBar()->maximum());
-    startList.append(S->addPackage(t));
+    updateLogs(S->addPackage(t), PackageType::start);
 
 
 }
 
-void MainWindow::check_orders()
+void MainWindow::checkOrders()
 {
-    updateLogs();
-    int res = S->checkForOrders();
-    if (res != -1)
-    {
-     //   startList.remove(res);
-        magList.append(res);
-    }
+    S->checkForOrders();
 }
 

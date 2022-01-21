@@ -100,6 +100,7 @@ Package *Robot::leavePackage()
     updateImgRotation();
     Package* p = this->pkg;
     this->pkg = nullptr;
+    this->order = nullptr;
     return p;
 }
 

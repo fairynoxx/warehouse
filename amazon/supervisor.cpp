@@ -14,8 +14,9 @@ int Supervisor::addPackage(PackageType type)
 {
     Package* pkg = new Package(numOfPackages, type);
     numOfPackages++;
+    allPackages.insert(pkg->getPackageId(), pkg);
     packages.enqueue(pkg);
-    return numOfPackages-1;
+    return pkg->getPackageId();
     //floor->shelves[PackageType::start][0]->addPackage(pkg);
 }
 
@@ -32,20 +33,19 @@ void Supervisor::setEndTile(QPair<int, int> p)
     floor->addShelf(p.first, p.second, PackageType::end);
 }
 
-int Supervisor::checkForOrders()
+void Supervisor::checkForOrders()
 {
     if(!packages.isEmpty())
     {
         Order* o = new Order;
         floor->shelves[PackageType::start][0]->addPackage(packages.front());
-        o->pkgId = packages.front()->id;
+        o->pkgId = packages.front()->getPackageId();
         o->posStart = startTile;
         o->posEnd = findShelfForPackage(o->pkgId, packages.front()->getPackageType());
+        packages.front()->changeStatus(PackageStatus::waiting);
         packages.pop_front();
         emit sendOrder(o);
-        return o->pkgId;
     }
-    return -1;
 }
 
 void Supervisor::packageRequested(int pkgId)
@@ -54,6 +54,7 @@ void Supervisor::packageRequested(int pkgId)
     o->pkgId = pkgId;
     o->posStart = packagesOnShelves[pkgId]->getShelfPosition();
     o->posEnd = endTile;
+    allPackages[o->pkgId]->changeStatus(PackageStatus::waiting);
     emit sendOrder(o);
 }
 
@@ -65,15 +66,39 @@ QVector<int> Supervisor::updateShelves()
     {
         for(auto b: a)
         {
+            QDebug deb = qDebug();
             if(b->getShelfType() != PackageType::start && b->getShelfType() != PackageType::end)
             {
-                pkgs = b->availablePackages();
+                qDebug() << "shelf on: " << b->posX << " " << b->posY;
+                pkgs = b->getAllPackages();
                 for(auto c: pkgs)
-                    pkgIds.push_back(c->id);
+                {
+                    pkgIds.push_back(c->getPackageId());
+                    deb << c->getPackageId();
+                }
             }
         }
     }
     return pkgIds;
+}
+
+QVector<int> Supervisor::getPackagesOnShelves()
+{
+    QVector<int> ids;
+    QVector<int> packages;
+    for (auto a: floor->shelves)
+    {
+        for (auto b: a)
+        {
+            PackageType type = b->getShelfType();
+            if(type != PackageType::start && type != PackageType::end)
+            {
+                packages = b->getAvailablePackages();
+                ids.append(packages);
+            }
+        }
+    }
+    return ids;
 }
 
 QPair<int, int> Supervisor::findShelfForPackage(int pkgId, PackageType type)
@@ -82,11 +107,36 @@ QPair<int, int> Supervisor::findShelfForPackage(int pkgId, PackageType type)
     {
         if(!a->isShelfFull())
         {
-            qDebug() << "ale super polka omg " << a->posX << " " << a->posY;
+            //qDebug() << "ale super polka omg " << a->posX << " " << a->posY;
             packagesOnShelves.insert(pkgId, a);
+
             return QPair<int,int>(a->posX,a->posY);
         }
     }
+}
+
+void Supervisor::cancelOrder(Order * o)
+{
+    if (o->posStart.first == startTile.first && o->posStart.second == startTile.first)
+    {
+        allPackages[o->pkgId]->changeStatus(PackageStatus::delivered);
+        packagesOnShelves.remove(o->pkgId);
+    }
+    else
+    {
+        allPackages[o->pkgId]->changeStatus(PackageStatus::delivered);
+    }
+}
+
+void Supervisor::orderCompleted(Order* o)
+{
+    if (o->posEnd.first == endTile.first && o->posEnd.second == endTile.second)
+    {
+        packagesOnShelves[o->pkgId] = floor->shelves[PackageType::end][0];
+        emit updateLogs(o->pkgId, PackageType::end);
+    }
+    else
+        emit updateLogs(o->pkgId, PackageType::cat1);
 }
 
 

@@ -39,7 +39,7 @@ void Floor::initFloor(QPair<int,int> startTile, QPair<int,int> endTile)
             column.back()->setX(scale*i);
             column.back()->setY(scale*j);
             column.back()->setScale(double(scale)/500);
-            qDebug()<<t->x() << " " << t->y() << " " << t->scale();
+            //qDebug()<<t->x() << " " << t->y() << " " << t->scale();
 
             scene->addItem(t);
         }
@@ -67,7 +67,7 @@ void Floor::addRobot(int x, int y)
     Robot *r = new Robot(x, y, tileSize);
     robots.push_back(r);
     scene->addItem(r);
-    qDebug() << r->x() << " " << r->y();
+    //qDebug() << r->x() << " " << r->y();
 }
 
 void Floor::moveRobot(Robot* r, Direction d)
@@ -107,12 +107,12 @@ void Floor::printShelves()
 void Floor::addNewPackage(Package* pkg)
 {
     newPackages.enqueue(pkg);
-    qDebug() << newPackages.size();
+    //qDebug() << newPackages.size();
 }
 
 QVector<Package*> Floor::availablePackages(Shelf* s)
 {
-    return s->availablePackages();
+    return s->getAllPackages();
 }
 
 void Floor::initializeShelves()

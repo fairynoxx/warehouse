@@ -25,32 +25,25 @@ private slots:
 
     void on_pushButton_clicked();
 
-    void on_pushButtonCreatePackage_clicked();
+    void makeStep();
 
-    void on_buttonTakePackage_clicked();
+    void newOrder();
 
-    void on_pushButtonNewOrder_clicked();
+    void newPackage();
 
-    void on_pushButtonRequestPackage_clicked();
+    void checkOrders();
 
-    void new_order();
-
-    void new_package();
-
-    void check_orders();
+    void updateLogs(int, PackageType);
 private:
     Ui::MainWindow *ui;
     class Floor *floorW;
     RobotSupervisor * RS;
     Supervisor * S;
     int numOfPackages = 0;
-    QVector<Shelf*> shelfNearRobot(Robot*);
-    void checkForPackages(Robot*);
     QTimer * timer;
     QTimer * newPkgTimer;
     QTimer * newOrderTimer;
     QTimer * checkPackagesTimer;
-    void updateLogs();
     QList<int> startList;
     QList<int> magList;
     QList<int> endList;
