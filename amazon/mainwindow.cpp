@@ -73,10 +73,10 @@ void MainWindow::on_pushButton_clicked()
     connect(newOrderTimer, SIGNAL(timeout()), this, SLOT(newOrder()));
     connect(checkPackagesTimer, SIGNAL(timeout()), this, SLOT(checkOrders()));
 
-    timer->start(100);
-    newPkgTimer->start(500);
-    newOrderTimer->start(10000);
-    checkPackagesTimer->start(100);
+    timer->start(500);
+    newPkgTimer->start(2000);
+    newOrderTimer->start(8000);
+    checkPackagesTimer->start(500);
 }
 
 void MainWindow::makeStep()
