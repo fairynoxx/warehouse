@@ -33,6 +33,8 @@ private:
     bool sendRobotId(int, QPair<int,int>);
     void updateFieldsState();
     QPair<int,int> determineEndField(QPair<int,int>);
+    QMap<int,int> robotsWaiting;
+    bool checkForDeadlock();
 };
 
 #endif // ROBOTSUPERVISOR_H

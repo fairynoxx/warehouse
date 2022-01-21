@@ -63,6 +63,7 @@ private:
     int numOfPackages = 0;
     QQueue<Package*> packages;
     QMap<int,Package*> allPackages;
+    QMap<QPair<int,int>,int> stateOfShelves;
 public slots:
     void cancelOrder(Order*);
     void orderCompleted(Order*);

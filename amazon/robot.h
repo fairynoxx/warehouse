@@ -33,7 +33,7 @@ public:
     int posY;
     Order* order;
     void moveRobot(Direction);
-    void moveRobotToCoordinates(QPair<int,int>);
+    bool moveRobotToCoordinates(QPair<int,int>);
     void takePackage(Package* p);
     Package* leavePackage();
     bool isBusy();

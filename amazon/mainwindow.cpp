@@ -43,23 +43,25 @@ void MainWindow::on_pushButton_clicked()
     //QSize s = floorW->getsize();
     floorW->addRobot(5,5);
     floorW->addRobot(6,6);
-    floorW->addRobot(7,7);
-    floorW->addRobot(8,8);
-    floorW->addRobot(0,7);
-    floorW->addRobot(0,6);
+//    floorW->addRobot(7,7);
+//    floorW->addRobot(8,8);
+//    floorW->addRobot(0,7);
+//    floorW->addRobot(0,6);
     RS->addRobot(floorW->robots[0]);
     RS->addRobot(floorW->robots[1]);
-    RS->addRobot(floorW->robots[2]);
-    RS->addRobot(floorW->robots[3]);
-    RS->addRobot(floorW->robots[4]);
-    RS->addRobot(floorW->robots[5]);
+//    RS->addRobot(floorW->robots[2]);
+//    RS->addRobot(floorW->robots[3]);
+//    RS->addRobot(floorW->robots[4]);
+//    RS->addRobot(floorW->robots[5]);
 
     S->addShelf(1,1,PackageType::cat1);
-    S->addShelf(4,4,PackageType::cat2);
-    S->addShelf(9,8,PackageType::cat2);
-    S->addShelf(6,4,PackageType::cat3);
-    S->addShelf(9,2,PackageType::cat4);
-//    RS->sendRobot(QPair<int,int>(1,8));
+    S->addShelf(4,1,PackageType::cat2);
+    S->addShelf(7,1,PackageType::cat2);
+    S->addShelf(1,8,PackageType::cat3);
+    S->addShelf(4,8,PackageType::cat4);
+    S->addShelf(7,8,PackageType::cat4);
+
+    //    RS->sendRobot(QPair<int,int>(1,8));
 //    RS->sendRobot(QPair<int,int>(9,9));
 //    RS->sendRobot(QPair<int,int>(0,9));
 //    S->floor->printShelves();

@@ -64,15 +64,15 @@ QVector<QPair<int, int> > RobotSupervisor::findPath(QPair<int,int> p1, QPair<int
     ////
     ///
 
-    for (int j = 0; j < floor->floorSize.second; j++)
-    {
-        QDebug deb = qDebug();
-        for (int i = 0; i < floor->floorSize.first ; i++)
-        {
-            deb << grid[i][j];
-        }
-        qDebug() << " ";
-    }
+//    for (int j = 0; j < floor->floorSize.second; j++)
+//    {
+//        QDebug deb = qDebug();
+//        for (int i = 0; i < floor->floorSize.first ; i++)
+//        {
+//            deb << grid[i][j];
+//        }
+//        qDebug() << " ";
+//    }
     //qDebug() << "start: " << p1.first << " " << p1.second << " end: " << p2.first << " " << p2.second;
     return path.trace;
 }
@@ -129,6 +129,7 @@ void RobotSupervisor::sendRobot(Order* o)
     if (robotId != -1)
     {
         busyRobots[robotId]->assignOrder(o);
+        robotsWaiting.insert(robotId, 0);
         robotsPaths.insert(robotId, findPath(busyRobots.find(robotId).value()->getCurrentPosition(),destination));
         return;
     }
@@ -146,7 +147,10 @@ void RobotSupervisor::moveRobots()
         //floor->tiles[busyRobots[a.key()]->getCurrentPosition().first][busyRobots[a.key()]->getCurrentPosition().second]->changeTileStatus(TileStatus::empty);
         if(!robotsPaths[a.key()].isEmpty())
         {
-            busyRobots.find(a.key()).value()->moveRobotToCoordinates(a.value().front());
+            if(!busyRobots.find(a.key()).value()->moveRobotToCoordinates(a.value().front()))
+                robotsWaiting[a.key()]++;
+            else
+                robotsWaiting[a.key()] = 0;
             robotsPaths[a.key()].pop_front();
         }
         //floor->tiles[busyRobots[a.key()]->getCurrentPosition().first][busyRobots[a.key()]->getCurrentPosition().second]->changeTileStatus(TileStatus::occupied);
@@ -161,6 +165,7 @@ void RobotSupervisor::moveRobots()
             {
                 leavePackage(a.key());
                 freeRobots.insert(a.key(), busyRobots[a.key()]);
+                robotsWaiting.remove(a.key());
                 busyRobots.remove(a.key());
                 finishedRobots.push_back(a.key());
             }
@@ -182,6 +187,7 @@ void RobotSupervisor::moveRobots()
                 sendRobotId(c, busyRobots[c]->order->posEnd);
         }
     }
+    checkForDeadlock();
 }
 
 void RobotSupervisor::robotsSynch()
@@ -196,7 +202,7 @@ void RobotSupervisor::robotsSynch()
                if(robotsPaths[a.key()][0] == robotsPaths[b.key()][0])
                {
                    robotsPaths[b.key()].emplaceFront(busyRobots[b.key()]->getCurrentPosition());
-                   qDebug() << "COLLISION " << busyRobots[a.key()]->posX << busyRobots[a.key()]->posY << " and " << busyRobots[b.key()]->posX << " " << busyRobots[b.key()]->posY;
+                   //qDebug() << "COLLISION " << busyRobots[a.key()]->posX << busyRobots[a.key()]->posY << " and " << busyRobots[b.key()]->posX << " " << busyRobots[b.key()]->posY;
                }
            }
        }
@@ -250,6 +256,17 @@ QPair<int, int> RobotSupervisor::determineEndField(QPair<int, int> shelfPos)
     if (v.isEmpty())
         return QPair<int,int>(-1, -1);
     return v[rand()%v.size()];
+}
+
+bool RobotSupervisor::checkForDeadlock()
+{
+    for (int &a: robotsWaiting.keys())
+    {
+        if(robotsWaiting[a] > 4)
+        {
+            qDebug() << "DEADLOCKKKKKK";
+        }
+    }
 }
 
 

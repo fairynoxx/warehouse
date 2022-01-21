@@ -8,6 +8,7 @@ Supervisor::Supervisor()
 void Supervisor::addShelf(int x, int y, PackageType type)
 {
     floor->addShelf(x, y, type);
+    stateOfShelves.insert(QPair<int,int>(x,y),0);
 }
 
 int Supervisor::addPackage(PackageType type)
@@ -43,6 +44,7 @@ void Supervisor::checkForOrders()
         o->posEnd = findShelfForPackage(o->pkgId, packages.front()->getPackageType());
         if(o->posEnd.first == -1)
         {
+           // delete o;
             qDebug() << "no free shelf";
             return;
         }
@@ -110,12 +112,13 @@ QPair<int, int> Supervisor::findShelfForPackage(int pkgId, PackageType type)
 {
     for (auto a: floor->shelves[type])
     {
-        if(!a->isShelfFull())
+        if(stateOfShelves[QPair<int,int>(a->posX, a->posY)] < MAX_PKGS)
         {
             //qDebug() << "ale super polka omg " << a->posX << " " << a->posY;
+            QPair<int,int> pos(a->posX,a->posY);
+            stateOfShelves[pos]++;
             packagesOnShelves.insert(pkgId, a);
-
-            return QPair<int,int>(a->posX,a->posY);
+            return pos;
         }
     }
     return QPair<int,int>(-1,-1);
@@ -126,6 +129,7 @@ void Supervisor::cancelOrder(Order * o)
     if (o->posStart.first == startTile.first && o->posStart.second == startTile.first)
     {
         allPackages[o->pkgId]->changeStatus(PackageStatus::delivered);
+        stateOfShelves[o->posEnd]--;
         packagesOnShelves.remove(o->pkgId);
     }
     else
@@ -139,10 +143,13 @@ void Supervisor::orderCompleted(Order* o)
     if (o->posEnd.first == endTile.first && o->posEnd.second == endTile.second)
     {
         packagesOnShelves[o->pkgId] = floor->shelves[PackageType::end][0];
+        stateOfShelves[o->posStart]--;
         emit updateLogs(o->pkgId, PackageType::end);
     }
     else
+    {
         emit updateLogs(o->pkgId, PackageType::cat1);
+    }
 }
 
 

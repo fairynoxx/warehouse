@@ -65,10 +65,10 @@ void Robot::moveRobot(Direction d)
 
 }
 
-void Robot::moveRobotToCoordinates(QPair<int, int> pos)
+bool Robot::moveRobotToCoordinates(QPair<int, int> pos)
 {
     if(pos.first == posX && pos.second == posY)
-        return;
+        return false;
     Direction d;
     if(pos.first == posX)
     {
@@ -85,6 +85,7 @@ void Robot::moveRobotToCoordinates(QPair<int, int> pos)
             d = Direction::west;
     }
     moveRobot(d);
+    return true;
 }
 
 void Robot::takePackage(Package* p)
