@@ -38,10 +38,15 @@ void Supervisor::checkForOrders()
     if(!packages.isEmpty())
     {
         Order* o = new Order;
-        floor->shelves[PackageType::start][0]->addPackage(packages.front());
         o->pkgId = packages.front()->getPackageId();
         o->posStart = startTile;
         o->posEnd = findShelfForPackage(o->pkgId, packages.front()->getPackageType());
+        if(o->posEnd.first == -1)
+        {
+            qDebug() << "no free shelf";
+            return;
+        }
+        floor->shelves[PackageType::start][0]->addPackage(packages.front());
         packages.front()->changeStatus(PackageStatus::waiting);
         packages.pop_front();
         emit sendOrder(o);
@@ -113,6 +118,7 @@ QPair<int, int> Supervisor::findShelfForPackage(int pkgId, PackageType type)
             return QPair<int,int>(a->posX,a->posY);
         }
     }
+    return QPair<int,int>(-1,-1);
 }
 
 void Supervisor::cancelOrder(Order * o)

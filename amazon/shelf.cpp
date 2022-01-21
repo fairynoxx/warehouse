@@ -57,7 +57,7 @@ void Shelf::addPackage(Package *pkg)
 {
     packages.insert(pkg->getPackageId(), pkg);
     pkg->changeStatus(PackageStatus::delivered);
-    if (getShelfType()==PackageType::start)
+    if (getShelfType() == PackageType::start || getShelfType() == PackageType::end)
     {
         isFull = false;
     }

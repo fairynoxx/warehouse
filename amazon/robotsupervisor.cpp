@@ -13,7 +13,7 @@ void RobotSupervisor::addRobot(Robot * r)
 {
     freeRobots.insert(numOfRobots, r);
     numOfRobots++;
-    //floor->tiles[r->getCurrentPosition().first][r->getCurrentPosition().second]->status = TileStatus::occupied;
+    floor->tiles[r->getCurrentPosition().first][r->getCurrentPosition().second]->status = TileStatus::occupied;
 }
 
 
@@ -66,12 +66,12 @@ QVector<QPair<int, int> > RobotSupervisor::findPath(QPair<int,int> p1, QPair<int
 
     for (int j = 0; j < floor->floorSize.second; j++)
     {
-        //QDebug deb //= qDebug();
+        QDebug deb = qDebug();
         for (int i = 0; i < floor->floorSize.first ; i++)
         {
-            //deb << grid[i][j];
+            deb << grid[i][j];
         }
-        //qDebug() << " ";
+        qDebug() << " ";
     }
     //qDebug() << "start: " << p1.first << " " << p1.second << " end: " << p2.first << " " << p2.second;
     return path.trace;
@@ -205,9 +205,14 @@ void RobotSupervisor::robotsSynch()
 
 bool RobotSupervisor::sendRobotId(int id, QPair<int, int> d)
 {
-    robotsPaths[id].clear();
     QPair<int,int> destination;
     destination = determineEndField(d);
+    if(destination.first == -1)
+    {
+        robotsPaths[id].emplaceFront(busyRobots[id]->getCurrentPosition());
+        return false;
+    }
+    robotsPaths[id].clear();
     robotsPaths[id] = findPath(busyRobots.find(id).value()->getCurrentPosition(),destination);
     return true;
 }
@@ -242,6 +247,8 @@ QPair<int, int> RobotSupervisor::determineEndField(QPair<int, int> shelfPos)
             }
         }
     }
+    if (v.isEmpty())
+        return QPair<int,int>(-1, -1);
     return v[rand()%v.size()];
 }
 
