@@ -13,12 +13,8 @@ class RobotSupervisor : public QObject
 public:
     RobotSupervisor();
     void addRobot(Robot*);
-    int chooseFreeRobot(QPair<int,int>); // pozycja do ktorej bedzie jechal
-    QVector<QPair<int,int>> findPath(QPair<int,int>, QPair<int,int>);
-    class Floor* floor;
-    void collectThePackage(int);
-    void leavePackage(int);
     void moveRobots();
+    class Floor* floor;
 public slots:
     void sendRobot(Order*);
 signals:
@@ -29,12 +25,18 @@ private:
     QMap<int, Robot*> freeRobots;
     QMap<int, Robot*> busyRobots;
     QMap<int, QVector<QPair<int,int>>> robotsPaths;
+    QMap<int,int> robotsWaiting;
+    void leavePackage(int);
+    void collectThePackage(int);
+    int chooseFreeRobot(QPair<int,int>); // pozycja do ktorej bedzie jechal
+    QVector<QPair<int,int>> findPath(QPair<int,int>, QPair<int,int>);
     void robotsSynch();
     bool sendRobotId(int, QPair<int,int>);
-    void updateFieldsState();
     QPair<int,int> determineEndField(QPair<int,int>);
-    QMap<int,int> robotsWaiting;
     bool checkForDeadlock();
+    void printGrid();
+    QVector<QPair<int,int>> findNeighbourFields(QPair<int,int>);
+    void resolveDeadlock();
 };
 
 #endif // ROBOTSUPERVISOR_H

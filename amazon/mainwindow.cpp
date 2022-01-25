@@ -27,7 +27,7 @@ void MainWindow::initFloor(int sizeX, int sizeY)
    floorW = new class Floor(sizeX, sizeY, this);
    RS->floor = floorW;
    S->floor = floorW;
-   this->ui->horizontalLayout_2->insertWidget(0, floorW);
+   this->ui->horizontalLayout->insertWidget(0, floorW);
 }
 
 
@@ -35,24 +35,23 @@ void MainWindow::on_pushButton_clicked()
 {
     initFloor(ui->spinBoxWidth->value(), ui->spinBoxHeight->value());
     floorW->setFloorSize(ui->spinBoxWidth->value(),ui->spinBoxHeight->value());
-    QPair<int,int> start(0,5);
-    QPair<int,int> end(9,5);
+    QPair<int,int> start(0,std::round(ui->spinBoxHeight->value()/2));
+    QPair<int,int> end(ui->spinBoxWidth->value()-1,std::round(ui->spinBoxHeight->value()/2));
     floorW->initFloor(start, end);
     S->setStartTile(start);
     S->setEndTile(end);
-    //QSize s = floorW->getsize();
-    floorW->addRobot(5,5);
-    floorW->addRobot(6,6);
-//    floorW->addRobot(7,7);
-//    floorW->addRobot(8,8);
-//    floorW->addRobot(0,7);
-//    floorW->addRobot(0,6);
+    floorW->addRobot(QPair<int,int>(5,5));
+    floorW->addRobot(QPair<int,int>(6,6));
+    floorW->addRobot(QPair<int,int>(7,7));
+    floorW->addRobot(QPair<int,int>(8,8));
+    floorW->addRobot(QPair<int,int>(0,7));
+    floorW->addRobot(QPair<int,int>(0,6));
     RS->addRobot(floorW->robots[0]);
     RS->addRobot(floorW->robots[1]);
-//    RS->addRobot(floorW->robots[2]);
-//    RS->addRobot(floorW->robots[3]);
-//    RS->addRobot(floorW->robots[4]);
-//    RS->addRobot(floorW->robots[5]);
+    RS->addRobot(floorW->robots[2]);
+    RS->addRobot(floorW->robots[3]);
+    RS->addRobot(floorW->robots[4]);
+    RS->addRobot(floorW->robots[5]);
 
     S->addShelf(1,1,PackageType::cat1);
     S->addShelf(4,1,PackageType::cat2);
@@ -61,10 +60,6 @@ void MainWindow::on_pushButton_clicked()
     S->addShelf(4,8,PackageType::cat4);
     S->addShelf(7,8,PackageType::cat4);
 
-    //    RS->sendRobot(QPair<int,int>(1,8));
-//    RS->sendRobot(QPair<int,int>(9,9));
-//    RS->sendRobot(QPair<int,int>(0,9));
-//    S->floor->printShelves();
     timer = new QTimer(this);
     newPkgTimer = new QTimer(this);
     newOrderTimer = new QTimer(this);
@@ -77,7 +72,7 @@ void MainWindow::on_pushButton_clicked()
 
     timer->start(500);
     newPkgTimer->start(2000);
-    newOrderTimer->start(8000);
+    newOrderTimer->start(5000);
     checkPackagesTimer->start(500);
 }
 

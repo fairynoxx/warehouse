@@ -83,7 +83,6 @@ public:
     // to destination
     void tracePath(QVector<QVector<cell>> cellDetails, Pair dest)
     {
-        //printf("\nThe Path is ");
         int row = dest.first;
         int col = dest.second;
 
@@ -118,13 +117,11 @@ public:
 
         // If the source is out of range
         if (isValid(src.first, src.second) == false) {
-            printf("Source is invalid\n");
             return;
         }
 
         // If the destination is out of range
         if (isValid(dest.first, dest.second) == false) {
-            //qDebug() << "Destination is invalid\n";
             return;
         }
 
@@ -132,14 +129,12 @@ public:
         if (isUnBlocked(grid, src.first, src.second) == false
             || isUnBlocked(grid, dest.first, dest.second)
                    == false) {
-            printf("Source or the destination is blocked\n");
             return;
         }
 
         // If the destination cell is the same as source cell
         if (isDestination(src.first, src.second, dest)
             == true) {
-            printf("We are already at the destination\n");
             return;
         }
 
@@ -286,7 +281,6 @@ public:
                     // Set the Parent of the destination cell
                     cellDetails[i + 1][j].parent_i = i;
                     cellDetails[i + 1][j].parent_j = j;
-                    printf("The destination cell is found\n");
                     tracePath(cellDetails, dest);
                     foundDest = true;
                     return;
@@ -333,7 +327,6 @@ public:
                     // Set the Parent of the destination cell
                     cellDetails[i][j + 1].parent_i = i;
                     cellDetails[i][j + 1].parent_j = j;
-                    printf("The destination cell is found\n");
                     tracePath(cellDetails, dest);
                     foundDest = true;
                     return;
@@ -382,7 +375,6 @@ public:
                     // Set the Parent of the destination cell
                     cellDetails[i][j - 1].parent_i = i;
                     cellDetails[i][j - 1].parent_j = j;
-                    printf("The destination cell is found\n");
                     tracePath(cellDetails, dest);
                     foundDest = true;
                     return;
@@ -428,9 +420,6 @@ public:
         // reach the destination cell. This may happen when the
         // there is no way to destination cell (due to
         // blockages)
-        if (foundDest == false)
-            printf("Failed to find the Destination Cell\n");
-
         return;
         }
     };

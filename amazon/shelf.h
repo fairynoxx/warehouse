@@ -5,7 +5,7 @@
 #include <QGraphicsPixmapItem>
 #include "package.h"
 
-#define MAX_PKGS 1
+#define MAX_PKGS 10
 
 class Shelf : public QObject, public QGraphicsPixmapItem
 {

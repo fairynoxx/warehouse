@@ -6,60 +6,71 @@ class Supervisor : public QObject
 {
     Q_OBJECT
 public:
+    /*!
+     * \brief Constructor of the class
+     */
     Supervisor();
-    /**
-     * Adds shelf to the warehouse
+    /*!
+     * \brief Adds shelf to the warehouse
      */
     void addShelf(int,int,PackageType);
 
-    /**
-     * creates new package
+    /*!
+     * \brief Creates new package
      */
     int addPackage(PackageType);
     Floor* floor;
-    /**
-     * sets start shelf of the warehouse
+    /*!
+     * \brief Start shelf of the warehouse
      */
     void setStartTile(QPair<int,int>);
 
-    /**
-     * sets end shelf of the warehouse
+    /*!
+     * \brief Sets end shelf of the warehouse
      */
     void setEndTile(QPair<int,int>);
 
-    /**
-     * checks if there are new packages waiting and prepares an order
+    /*!
+     * \brief Checks if there are new packages waiting and prepares an order
      */
     void checkForOrders();
 
-    /**
-     * prepares an order for requested package
+    /*!
+     * \brief Prepares an order for requested package
      */
     void packageRequested(int);
 
-    /**
-     *  gives the IDs of all packages on shelves (excluding start and end)
-     */
-    QVector<int> updateShelves();
-
-    /**
-     *  gives vector of all available packages on shelves
+    /*!
+     * \brief  Gives vector of all available packages on shelves
      */
     QVector<int> getPackagesOnShelves();
 private:
+
+    /*!
+     * \brief Position of the start shelf
+     */
     QPair<int,int> startTile;
+
+    /*!
+     * \brief Position of the end shelf
+     */
     QPair<int,int> endTile;
 
-    /**
-     * map of all of the packages and shelves that they are on
+    /*!
+     * \brief Map of all of the packages and shelves that they are on
      */
     QMap<int,Shelf*> packagesOnShelves;
 
-    /**
-     * gives position of the free shelf of particular type and
+    /*!
+     * \brief Gives position of the free shelf of particular type and
      * adds package ID and shelf to the packagesOnShelves
      */
     QPair<int,int> findShelfForPackage(int,PackageType);
+
+    /*!
+     * \brief  Gives the IDs of all packages on shelves (excluding start and end)
+     */
+    QVector<int> updateShelves();
     int numOfPackages = 0;
     QQueue<Package*> packages;
     QMap<int,Package*> allPackages;
@@ -69,7 +80,7 @@ public slots:
     void orderCompleted(Order*);
 signals:
     void sendOrder(Order*);
-    void updateLogs(int,PackageType); // 0 for normal shelf, 1 for end shelf
+    void updateLogs(int, PackageType);
 };
 
 #endif // SUPERVISOR_H
