@@ -2,8 +2,11 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QTimer>
 #include "floor.h"
 #include "shelf.h"
+#include "robotsupervisor.h"
+#include "supervisor.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -22,23 +25,27 @@ private slots:
 
     void on_pushButton_clicked();
 
-    void on_buttonNorth_clicked();
+    void makeStep();
 
-    void on_buttonSouth_clicked();
+    void newOrder();
 
-    void on_buttonEast_clicked();
+    void newPackage();
 
-    void on_buttonWest_clicked();
+    void checkOrders();
 
-    void on_pushButtonCreatePackage_clicked();
-
-    void on_buttonTakePackage_clicked();
-
+    void updateLogs(int, PackageType);
 private:
     Ui::MainWindow *ui;
     class Floor *floorW;
+    RobotSupervisor * RS;
+    Supervisor * S;
     int numOfPackages = 0;
-    QVector<Shelf*> shelfNearRobot(Robot*);
-    void checkForPackages(Robot*);
+    QTimer * timer;
+    QTimer * newPkgTimer;
+    QTimer * newOrderTimer;
+    QTimer * checkPackagesTimer;
+    QList<int> startList;
+    QList<int> magList;
+    QList<int> endList;
 };
 #endif // MAINWINDOW_H

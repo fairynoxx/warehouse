@@ -1,5 +1,6 @@
 #ifndef PACKAGE_H
 #define PACKAGE_H
+#include <QPair>
 
 
 enum class PackageType
@@ -9,7 +10,8 @@ enum class PackageType
     cat2,
     cat3,
     cat4,
-    start
+    start,
+    end
 };
 
 enum class PackageStatus
@@ -20,6 +22,13 @@ enum class PackageStatus
     onTheWay,
 };
 
+struct Order
+{
+    QPair<int,int> posStart;
+    QPair<int,int> posEnd;
+    int pkgId;
+};
+
 class Package
 {
 public:
@@ -28,12 +37,14 @@ public:
 private:
     PackageStatus status;
     PackageType type;
+    int id;
 public:
     //// TODO MOVE TO PRIVATE, ADD METHOD
-    int id;
     ////
     void changeStatus(PackageStatus);
     PackageType getPackageType();
+    PackageStatus getPackageStatus();
+    int getPackageId();
 };
 
 #endif // PACKAGE_H

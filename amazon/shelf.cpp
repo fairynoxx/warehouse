@@ -6,6 +6,8 @@ Shelf::Shelf(int x, int y, PackageType t, QObject *parent, QGraphicsItem *parent
     posY = y;
     type = t;
     setImage();
+//    if(t == PackageType::start || t == PackageType::end)
+//          set some bigger MAX_PKGS
 }
 
 void Shelf::setImage()
@@ -43,6 +45,8 @@ void Shelf::setImage()
         else
             setPixmap(QPixmap(":/images/shelf_4.png"));
         break;
+    case PackageType::start:
+        setPixmap(QPixmap(":/images/start_field.png"));
     default:
         break;
     }
@@ -51,12 +55,19 @@ void Shelf::setImage()
 
 void Shelf::addPackage(Package *pkg)
 {
-    packages.insert(pkg->id, pkg);
+    packages.insert(pkg->getPackageId(), pkg);
     pkg->changeStatus(PackageStatus::delivered);
-    if (packages.size() == MAX_PKGS)
-        isFull = true;
-    if (isEmpty)
-        isEmpty = false;
+    if (getShelfType() == PackageType::start || getShelfType() == PackageType::end)
+    {
+        isFull = false;
+    }
+    else
+    {
+        if (packages.size() == MAX_PKGS)
+            isFull = true;
+        if (isEmpty)
+            isEmpty = false;
+    }
     setImage();
 }
 
@@ -82,12 +93,22 @@ bool Shelf::isShelfEmpty()
     return isEmpty;
 }
 
-QVector<Package*> Shelf::availablePackages()
+QVector<Package*> Shelf::getAllPackages()
 {
     QVector<Package*> v;
     QList<Package*> l = packages.values();
     for (auto a: l)
         v.push_back(a);
+    return v;
+}
+
+QVector<int> Shelf::getAvailablePackages()
+{
+    QVector<int> v;
+    QList<Package*> l = packages.values();
+    for (auto a: l)
+        if(a->getPackageStatus() == PackageStatus::delivered)
+            v.push_back(a->getPackageId());
     return v;
 }
 
@@ -101,4 +122,14 @@ bool Shelf::isThereAPackage(int id)
     if (packages.keys().contains(id))
         return true;
     return false;
+}
+
+QPair<int, int> Shelf::getShelfPosition()
+{
+    return QPair<int,int>(posX,posY);
+}
+
+void Shelf::changePackageStatus(int id, PackageStatus status)
+{
+    packages[id]->changeStatus(status);
 }

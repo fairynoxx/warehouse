@@ -5,7 +5,7 @@
 #include <QGraphicsPixmapItem>
 #include "package.h"
 
-#define MAX_PKGS 2
+#define MAX_PKGS 10
 
 class Shelf : public QObject, public QGraphicsPixmapItem
 {
@@ -28,9 +28,12 @@ public:
     Package* removePackage(int id);
     bool isShelfFull();
     bool isShelfEmpty();
-    QVector<Package*> availablePackages();
+    QVector<Package*> getAllPackages();
+    QVector<int> getAvailablePackages();
     PackageType getShelfType();
     bool isThereAPackage(int);
+    QPair<int,int> getShelfPosition();
+    void changePackageStatus(int, PackageStatus);
 signals:
 
 };

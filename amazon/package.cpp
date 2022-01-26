@@ -18,7 +18,17 @@ PackageType Package::getPackageType()
     return type;
 }
 
+PackageStatus Package::getPackageStatus()
+{
+    return status;
+}
+
+int Package::getPackageId()
+{
+    return id;
+}
+
 Package::~Package()
 {
-    qDebug() << "died";
+    //qDebug() << "died";
 }

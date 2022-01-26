@@ -5,6 +5,12 @@
 #include "shelf.h"
 
 
+/*!
+ * \brief Constructor of the class
+ * \param sizeX - height of the warehouse
+ * \param sizeY - width of the warehouse
+ * \param parent - parent
+ */
 Floor::Floor(int sizeX, int sizeY, QWidget *parent) :
     QWidget(parent),
     ui(new Ui::Floor)
@@ -16,15 +22,23 @@ Floor::Floor(int sizeX, int sizeY, QWidget *parent) :
     scene->setSceneRect(ui->graphicsView->rect());
     this->ui->graphicsView->setScene(scene);
     show();
- //   this->ui->graphicsView->fitInView(ui->graphicsView->rect(),Qt::KeepAspectRatio);
 }
 
+/*!
+* \brief Destructor of the class
+*/
 Floor::~Floor()
 {
     delete ui;
 }
 
-void Floor::initFloor()
+/*!
+ * \brief Initializes the floor
+ * Determine size of the tiles based on warehouse size, initializes vectors of tiles, sets images for special tiles.
+ * \param startTile - position of the start shelf
+ * \param endTile - position of the end shelf
+ */
+void Floor::initFloor(QPair<int,int> startTile, QPair<int,int> endTile)
 {
     QSize size = this->ui->graphicsView->size();
     int scale = size.width()/std::max(floorSize.first, floorSize.second);
@@ -36,44 +50,48 @@ void Floor::initFloor()
         {
             Tile *t = new Tile();
             column.push_back(t);
-            column.back()->setX(scale*j);
-            column.back()->setY(scale*i);
+            column.back()->setX(scale*i);
+            column.back()->setY(scale*j);
             column.back()->setScale(double(scale)/500);
-            qDebug()<<t->x() << " " << t->y() << " " << t->scale();
-
             scene->addItem(t);
         }
         this->tiles.push_back(column);
     }
     this->ui->graphicsView->fitInView(ui->graphicsView->rect(),Qt::KeepAspectRatio);
     initializeShelves();
-    tiles[5][0]->setPixmap(QPixmap(":/images/start_tile.png"));
+    tiles[startTile.first][startTile.second]->setPixmap(QPixmap(":/images/start_tile.png"));
+    tiles[endTile.first][endTile.second]->setPixmap(QPixmap(":/images/start_tile.png"));
 }
 
-QSize Floor::getsize()
-{
-    return this->ui->graphicsView->size();
-}
-
+/*!
+ * \brief Sets the size of the warehouse floor
+ * \param x - height
+ * \param y - width
+ */
 void Floor::setFloorSize(int x, int y)
 {
     this->floorSize.first = y;
     this->floorSize.second = x;
 }
 
-void Floor::addRobot(int x, int y)
+/*!
+ * \brief Adds robot to the floor
+ * \param pos - position of the robot
+ */
+void Floor::addRobot(QPair<int,int> pos)
 {
-    Robot *r = new Robot(x, y, tileSize);
+    Robot *r = new Robot(pos, tileSize);
     robots.push_back(r);
     scene->addItem(r);
-    qDebug() << r->x() << " " << r->y();
+    //qDebug() << r->x() << " " << r->y();
 }
 
-void Floor::moveRobot(Robot* r, Direction d)
-{
-    r->moveRobot(d);
-}
-
+/*!
+ * \brief Adds shelf to the floor
+ * \param xPos - x coordinate of the shelf
+ * \param yPos - y coordinate of the shelf
+ * \param type - type of the shelf
+ */
 void Floor::addShelf(int xPos, int yPos, PackageType type)
 {
     Shelf* s = new Shelf(xPos, yPos, type);
@@ -82,36 +100,12 @@ void Floor::addShelf(int xPos, int yPos, PackageType type)
     s->setY(yPos*tileSize);
     s->setScale(double(tileSize)/500);
     shelves[type].push_back(s);
+    tiles[xPos][yPos]->changeTileStatus(TileStatus::occupied);
 }
 
-void Floor::printShelves()
-{
-    qDebug() << "cat1";
-    for (int i = 0; i < shelves[PackageType::cat1].size(); i++)
-        qDebug() << shelves[PackageType::cat1][i]->posX << " " << shelves[PackageType::cat1][i]->posY;
-    qDebug() << "cat2";
-    for (int i = 0; i < shelves[PackageType::cat2].size(); i++)
-        qDebug() << shelves[PackageType::cat2][i]->posX << " " << shelves[PackageType::cat2][i]->posY;
-    qDebug() << "cat3";
-    for (int i = 0; i < shelves[PackageType::cat3].size(); i++)
-        qDebug() << shelves[PackageType::cat3][i]->posX << " " << shelves[PackageType::cat3][i]->posY;
-    qDebug() << "cat4";
-    for (int i = 0; i < shelves[PackageType::cat4].size(); i++)
-        qDebug() << shelves[PackageType::cat4][i]->posX << " " << shelves[PackageType::cat4][i]->posY;
-
-}
-
-void Floor::addNewPackage(Package* pkg)
-{
-    newPackages.enqueue(pkg);
-    qDebug() << newPackages.size();
-}
-
-QVector<Package*> Floor::availablePackages(Shelf* s)
-{
-    return s->availablePackages();
-}
-
+/*!
+ * \brief Initializes map of the shelves based on possible categories
+ */
 void Floor::initializeShelves()
 {
     QVector<Shelf*> v1;
@@ -122,5 +116,7 @@ void Floor::initializeShelves()
     shelves.insert(PackageType::cat3, v3);
     QVector<Shelf*> v4;
     shelves.insert(PackageType::cat4, v4);
+    QVector<Shelf*> v5;
+    shelves.insert(PackageType::start, v4);
 }
 

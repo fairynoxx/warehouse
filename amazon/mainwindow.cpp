@@ -2,16 +2,19 @@
 #include "ui_mainwindow.h"
 #include "qmessagebox.h"
 #include "floor.h"
+#include <QScrollBar>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    ui->comboBoxPackageType->addItem("category 1");
-    ui->comboBoxPackageType->addItem("category 2");
-    ui->comboBoxPackageType->addItem("category 3");
-    ui->comboBoxPackageType->addItem("category 4");
+    RS = new RobotSupervisor;
+    S = new Supervisor;
+    connect(S, &Supervisor::sendOrder, RS, &RobotSupervisor::sendRobot);
+    connect(RS, &RobotSupervisor::orderNotAccepted, S, &Supervisor::cancelOrder);
+    connect(RS, &RobotSupervisor::packageLeftOnShelf, S, &Supervisor::orderCompleted);
+    connect(S, &Supervisor::updateLogs, this, &MainWindow::updateLogs);
 }
 
 MainWindow::~MainWindow()
@@ -21,60 +24,116 @@ MainWindow::~MainWindow()
 
 void MainWindow::initFloor(int sizeX, int sizeY)
 {
-   floorW = new class Floor(sizeX, sizeY,this);
-   this->ui->horizontalLayout_2->insertWidget(0, floorW);
+   floorW = new class Floor(sizeX, sizeY, this);
+   RS->floor = floorW;
+   S->floor = floorW;
+   this->ui->horizontalLayout->insertWidget(0, floorW);
 }
 
 
 void MainWindow::on_pushButton_clicked()
 {
-    initFloor(ui->spinBoxWidth->value(),ui->spinBoxHeight->value());
+    initFloor(ui->spinBoxWidth->value(), ui->spinBoxHeight->value());
     floorW->setFloorSize(ui->spinBoxWidth->value(),ui->spinBoxHeight->value());
-    floorW->initFloor();
-    //QSize s = floorW->getsize();
-    floorW->addRobot(5,5);
-    floorW->addShelf(1,1,PackageType::cat1);
-    floorW->addShelf(4,4,PackageType::cat2);
-    floorW->addShelf(9,8,PackageType::cat2);
-    floorW->addShelf(6,4,PackageType::cat3);
-    floorW->addShelf(9,2,PackageType::cat4);
-    floorW->printShelves();
+    QPair<int,int> start(0,std::round(ui->spinBoxHeight->value()/2));
+    QPair<int,int> end(ui->spinBoxWidth->value()-1,std::round(ui->spinBoxHeight->value()/2));
+    floorW->initFloor(start, end);
+    S->setStartTile(start);
+    S->setEndTile(end);
+    floorW->addRobot(QPair<int,int>(5,5));
+    floorW->addRobot(QPair<int,int>(6,6));
+    floorW->addRobot(QPair<int,int>(7,7));
+    floorW->addRobot(QPair<int,int>(8,8));
+    floorW->addRobot(QPair<int,int>(0,7));
+    floorW->addRobot(QPair<int,int>(0,6));
+    RS->addRobot(floorW->robots[0]);
+    RS->addRobot(floorW->robots[1]);
+    RS->addRobot(floorW->robots[2]);
+    RS->addRobot(floorW->robots[3]);
+    RS->addRobot(floorW->robots[4]);
+    RS->addRobot(floorW->robots[5]);
+
+    S->addShelf(1,1,PackageType::cat1);
+    S->addShelf(4,1,PackageType::cat2);
+    S->addShelf(7,1,PackageType::cat2);
+    S->addShelf(1,8,PackageType::cat3);
+    S->addShelf(4,8,PackageType::cat4);
+    S->addShelf(7,8,PackageType::cat4);
+
+    timer = new QTimer(this);
+    newPkgTimer = new QTimer(this);
+    newOrderTimer = new QTimer(this);
+    checkPackagesTimer = new QTimer(this);
+
+    connect(timer, SIGNAL(timeout()), this, SLOT(makeStep()));
+    connect(newPkgTimer, SIGNAL(timeout()), this, SLOT(newPackage()));
+    connect(newOrderTimer, SIGNAL(timeout()), this, SLOT(newOrder()));
+    connect(checkPackagesTimer, SIGNAL(timeout()), this, SLOT(checkOrders()));
+
+    timer->start(500);
+    newPkgTimer->start(2000);
+    newOrderTimer->start(5000);
+    checkPackagesTimer->start(500);
 }
 
-void MainWindow::on_buttonNorth_clicked()
+void MainWindow::makeStep()
 {
-    floorW->moveRobot(floorW->robots[0], Direction::north);
-    checkForPackages(floorW->robots[0]);
-
+    RS->moveRobots();
 }
 
-
-void MainWindow::on_buttonSouth_clicked()
+void MainWindow::updateLogs(int id, PackageType type)
 {
-    floorW->moveRobot(floorW->robots[0], Direction::south);
-    checkForPackages(floorW->robots[0]);
+    ui->logWindowMag->clear();
+    ui->logWindowStart->clear();
+    ui->logWindowsEnd->clear();
+    switch (type) {
+    case PackageType::start:
+        startList.append(id);
+        break;
+    case PackageType::end:
+        endList.append(id);
+        magList.removeOne(id);
+        break;
+    default:
+        magList.append(id);
+        startList.removeOne(id);
+        break;
+    }
+
+    for(auto a: startList)
+    {
+        ui->logWindowStart->appendPlainText(QString::number(a));
+    }
+    for(auto a: magList)
+    {
+        ui->logWindowMag->appendPlainText(QString::number(a));
+    }
+    for(auto a: endList)
+    {
+        ui->logWindowsEnd->appendPlainText(QString::number(a));
+    }
+    ui->logWindowStart->verticalScrollBar()->setValue(ui->logWindowStart->verticalScrollBar()->maximum());
+    ui->logWindowMag->verticalScrollBar()->setValue(ui->logWindowMag->verticalScrollBar()->maximum());
+    ui->logWindowsEnd->verticalScrollBar()->setValue(ui->logWindowsEnd->verticalScrollBar()->maximum());
 
 }
+// new order for taking package from the shelf
 
-
-void MainWindow::on_buttonEast_clicked()
+void MainWindow::newOrder()
 {
-    floorW->moveRobot(floorW->robots[0], Direction::east);
-    checkForPackages(floorW->robots[0]);
+    QVector<int> packages = S->getPackagesOnShelves();
+    numOfPackages = packages.size();
+    if(numOfPackages == 0)
+        return;
+    int chosenPackage = rand() % numOfPackages;
+    S->packageRequested(packages[chosenPackage]);
+
 }
 
-
-void MainWindow::on_buttonWest_clicked()
-{
-    floorW->moveRobot(floorW->robots[0], Direction::west);
-    checkForPackages(floorW->robots[0]);
-}
-
-
-void MainWindow::on_pushButtonCreatePackage_clicked()
+void MainWindow::newPackage()
 {
     PackageType t;
-    switch (ui->comboBoxPackageType->currentIndex()) {
+    switch (rand()%4) {
     case 0:
         t = PackageType::cat1;
         break;
@@ -91,79 +150,16 @@ void MainWindow::on_pushButtonCreatePackage_clicked()
         t = PackageType::cat1;
         break;
     }
-    Package* pkg = new Package(numOfPackages, t);
-    numOfPackages++;
-    //floorW->addNewPackage(pkg);
-    floorW->shelves[t][0]->addPackage(pkg);
+//    QString text = "created new package of category:"+QString::number(static_cast<int>(t));
+//    ui->logWindow->appendPlainText(text);
+//    ui->logWindow->verticalScrollBar()->setValue(ui->logWindow->verticalScrollBar()->maximum());
+    updateLogs(S->addPackage(t), PackageType::start);
+
+
 }
 
-QVector<Shelf*> MainWindow::shelfNearRobot(Robot * r)
+void MainWindow::checkOrders()
 {
-    QVector<Shelf*> v;
-    for (auto &a: floorW->shelves)
-    {
-        for (auto b: a)
-        {
-            if (r->posX == b->posX)
-                if (b->posY == r->posY - 1 || b->posY == r->posY + 1)
-                    v.push_back(b);
-            if (r->posY == b->posY)
-                if (b->posX == r->posX - 1 || b->posX == r->posX + 1)
-                    v.push_back(b);
-        }
-    }
-    return v;
-}
-
-void MainWindow::checkForPackages(Robot * r)
-{
-    QVector<Shelf*> s = shelfNearRobot(r);
-    ui->comboBoxAvailablePackages->clear();
-    if (!s.isEmpty())
-    {
-        QVector<Package*> v;
-        for (auto a: s)
-        {
-            v = floorW->availablePackages(a);
-            for (auto b: v)
-            {
-                ui->comboBoxAvailablePackages->addItem(QString::number(b->id));
-            }
-        }
-
-    }
-}
-
-
-void MainWindow::on_buttonTakePackage_clicked()
-{
-    QVector<Shelf*> s = shelfNearRobot(floorW->robots[0]);
-    if (!s.isEmpty())
-    {
-        if (!floorW->robots[0]->isBusy())
-        {
-            for (auto a: s)
-            {
-                if(a->isThereAPackage(ui->comboBoxAvailablePackages->currentText().toInt()))
-                {
-                    floorW->robots[0]->takePackage(a->removePackage(ui->comboBoxAvailablePackages->currentText().toInt()));
-                    break;
-                }
-            }
-        }
-        else
-        {
-            for (auto a: s)
-            {
-                if(floorW->robots[0]->getPackageType() == a->getShelfType())
-                {
-                    a->addPackage(floorW->robots[0]->leavePackage());
-                    break;
-                }
-            }
-
-        }
-    }
-
+    S->checkForOrders();
 }
 
