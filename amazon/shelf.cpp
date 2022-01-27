@@ -1,15 +1,24 @@
 #include "shelf.h"
 
+/*!
+ * \brief Constructor of the class
+ * \param x - x coordinate of the position
+ * \param y - y coordinate of the position
+ * \param t - type of the shelf
+ * \param parent - parent
+ * \param parentPix - parentPix
+ */
 Shelf::Shelf(int x, int y, PackageType t, QObject *parent, QGraphicsItem *parentPix) : QObject(parent), QGraphicsPixmapItem(parentPix)
 {
     posX = x;
     posY = y;
     type = t;
     setImage();
-//    if(t == PackageType::start || t == PackageType::end)
-//          set some bigger MAX_PKGS
 }
 
+/*!
+ * \brief Sets image of the shelf based on type and fill
+ */
 void Shelf::setImage()
 {
     switch (type) {
@@ -52,7 +61,10 @@ void Shelf::setImage()
     }
 }
 
-
+/*!
+ * \brief Adds package to the shelf
+ * \param pkg - pointer to the package
+ */
 void Shelf::addPackage(Package *pkg)
 {
     packages.insert(pkg->getPackageId(), pkg);
@@ -71,6 +83,11 @@ void Shelf::addPackage(Package *pkg)
     setImage();
 }
 
+/*!
+ * \brief Removes package from the shelf
+ * \param id - ID of the package to be removed
+ * \return pointer to the removed package
+ */
 Package* Shelf::removePackage(int id)
 {
     Package *pkg = packages.take(id);
@@ -83,16 +100,28 @@ Package* Shelf::removePackage(int id)
     return pkg;
 }
 
+/*!
+ * \brief Says if shelf is full
+ * \return true if shelf is full, false if shelf is not full
+ */
 bool Shelf::isShelfFull()
 {
     return isFull;
 }
 
+/*!
+ * \brief Says if shelf is empty
+ * \return true if shelf is empty, false if shelf is not empty
+ */
 bool Shelf::isShelfEmpty()
 {
     return isEmpty;
 }
 
+/*!
+ * \brief Gives all packages on shelf
+ * \return vector of all packages on shelf
+ */
 QVector<Package*> Shelf::getAllPackages()
 {
     QVector<Package*> v;
@@ -102,6 +131,10 @@ QVector<Package*> Shelf::getAllPackages()
     return v;
 }
 
+/*!
+ * \brief Gives IDs of all packages on shelf
+ * \return vector of all packages IDs
+ */
 QVector<int> Shelf::getAvailablePackages()
 {
     QVector<int> v;
@@ -112,11 +145,20 @@ QVector<int> Shelf::getAvailablePackages()
     return v;
 }
 
+/*!
+ * \brief Gives shelf type
+ * \return type of the shelf
+ */
 PackageType Shelf::getShelfType()
 {
     return type;
 }
 
+/*!
+ * \brief Checks if there is package with ID on shelf
+ * \param id - ID of the package
+ * \return true if there is such package on shelf, false if there is not such package on shelf
+ */
 bool Shelf::isThereAPackage(int id)
 {
     if (packages.keys().contains(id))
@@ -124,11 +166,20 @@ bool Shelf::isThereAPackage(int id)
     return false;
 }
 
+/*!
+ * \brief Gives position of the shelf
+ * \return x, y coordinated of position of the shelf
+ */
 QPair<int, int> Shelf::getShelfPosition()
 {
     return QPair<int,int>(posX,posY);
 }
 
+/*!
+ * \brief Sets status of the package on shelf
+ * \param id - ID of the package which status has to be changed
+ * \param status - new status of the package
+ */
 void Shelf::changePackageStatus(int id, PackageStatus status)
 {
     packages[id]->changeStatus(status);
