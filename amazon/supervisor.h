@@ -2,6 +2,10 @@
 #define SUPERVISOR_H
 #include "floor.h"
 
+/*!
+ * \brief The Supervisor class
+ * Chooses the destination for the packages, sends orders
+ */
 class Supervisor : public QObject
 {
     Q_OBJECT
@@ -19,9 +23,12 @@ public:
      * \brief Creates new package
      */
     int addPackage(PackageType);
+    /*!
+     * \brief Pointer to the floor, access to shelves
+     */
     Floor* floor;
     /*!
-     * \brief Start shelf of the warehouse
+     * \brief Sets start shelf of the warehouse
      */
     void setStartTile(QPair<int,int>);
 
@@ -57,29 +64,53 @@ private:
     QPair<int,int> endTile;
 
     /*!
-     * \brief Map of all of the packages and shelves that they are on
+     * \brief Map of all of the packages and shelves that they are on (key - package ID, value - pointer to a shelf)
      */
     QMap<int,Shelf*> packagesOnShelves;
 
     /*!
-     * \brief Gives position of the free shelf of particular type and
-     * adds package ID and shelf to the packagesOnShelves
+     * \brief Gives position of the free shelf of particular type and adds package ID and shelf to the packagesOnShelves
      */
     QPair<int,int> findShelfForPackage(int,PackageType);
 
     /*!
-     * \brief  Gives the IDs of all packages on shelves (excluding start and end)
+     * \brief Number of packages
      */
-    QVector<int> updateShelves();
     int numOfPackages = 0;
+
+    /*!
+     * \brief Queue of newly arrived packages
+     */
     QQueue<Package*> packages;
+
+    /*!
+     * \brief Map of all packages (key - ID of the package, value - pointer to the package)
+     */
     QMap<int,Package*> allPackages;
+
+    /*!
+     * \brief State of the shelves - number of the packages on shelves - updated when the order is created
+     */
     QMap<QPair<int,int>,int> stateOfShelves;
 public slots:
+    /*!
+     * \brief Cancels the order when RobotSupervisor gives the signal that there are no free robots
+     */
     void cancelOrder(Order*);
+
+    /*!
+     * \brief Completes the order
+     */
     void orderCompleted(Order*);
 signals:
+    /*!
+     * \brief Sends signal to the Robot Supervisor with new order
+     */
     void sendOrder(Order*);
+
+    /*!
+     * \brief Updates logs
+     */
     void updateLogs(int, PackageType);
 };
 

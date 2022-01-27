@@ -177,6 +177,9 @@ void Robot::assignOrder(Order* o)
     order = o;
 }
 
+/*!
+ * \brief Updates image of the robot based on current rotation
+ */
 void Robot::updateImgRotation()
 {
     QPixmap p2;
@@ -198,6 +201,11 @@ void Robot::updateImgRotation()
     }
 }
 
+/*!
+ * \brief Checks if direction of the robot is opposite to the target orientation
+ * \param d - target orientation
+ * \return true - direction is opposite, false - direction is not opposite
+ */
 bool Robot::isDirectionOpposite(Direction d)
 {
     switch (d) {
@@ -221,6 +229,11 @@ bool Robot::isDirectionOpposite(Direction d)
     return false;
 }
 
+/*!
+ * \brief Gets number of rotations based on targed orientation
+ * \param d - target orientation
+ * \return 2 - two rotations (clockwise or anticlockwise), 1 - one rotation clockwise, -1 - one rotation anticlockwise
+ */
 int Robot::getRotations(Direction d)
 {
     if(isDirectionOpposite(d))
@@ -252,6 +265,6 @@ int Robot::getRotations(Direction d)
             return -1;
         break;
     default:
-        throw("ajajajaj");
+        throw("");
     }
 }

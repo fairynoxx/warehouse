@@ -49,7 +49,7 @@ private:
     void rotateRobot(Direction);
 
     /*!
-     * \brief Gets direction based on the number of rotations
+     * \brief Gets number of rotations based on targed orientation
      */
     int getRotations(Direction);
 

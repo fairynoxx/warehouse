@@ -3,12 +3,18 @@
 #include <QDebug>
 #include "astar.cpp"
 
+/*!
+ * \brief Constructor of the class
+ */
 RobotSupervisor::RobotSupervisor()
 {
 
-
 }
 
+/*!
+ * \brief Adds robot to the warehouse, assigns it as free robot
+ * \param r - pointer to the robot
+ */
 void RobotSupervisor::addRobot(Robot * r)
 {
     freeRobots.insert(numOfRobots, r);
@@ -16,7 +22,11 @@ void RobotSupervisor::addRobot(Robot * r)
     floor->tiles[r->getCurrentPosition().first][r->getCurrentPosition().second]->changeTileStatus(TileStatus::occupied);
 }
 
-
+/*!
+ * \brief Chooses the closest robot to the start field taken from order
+ * \param r - start field of the order
+ * \return ID of the robot - if -1 there are no free robots
+ */
 int RobotSupervisor::chooseFreeRobot(QPair<int,int> r)
 {
     QPair<int,int> pos;
@@ -42,6 +52,12 @@ int RobotSupervisor::chooseFreeRobot(QPair<int,int> r)
     return robotId;
 }
 
+/*!
+ * \brief Finds path between two fields using A* algorithm
+ * \param p1 - start field
+ * \param p2 - end field
+ * \return path in form of the vector of fields coordinates
+ */
 QVector<QPair<int, int> > RobotSupervisor::findPath(QPair<int,int> p1, QPair<int,int> p2)
 {
     QVector<QVector<int>> grid;
@@ -60,26 +76,17 @@ QVector<QPair<int, int> > RobotSupervisor::findPath(QPair<int,int> p1, QPair<int
         grid.push_back(column);
     }
     path.aStarSearch(grid, p1, p2);
-    ////
-    ///
-
-//    for (int j = 0; j < floor->floorSize.second; j++)
-//    {
-//        QDebug deb = qDebug();
-//        for (int i = 0; i < floor->floorSize.first ; i++)
-//        {
-//            deb << grid[i][j];
-//        }
-//        qDebug() << " ";
-//    }
-    //qDebug() << "start: " << p1.first << " " << p1.second << " end: " << p2.first << " " << p2.second;
     return path.trace;
 }
 
+/*!
+ * \brief Orders robot to collect the package from shelf
+ * Finds the shelf on the floor that robot was going to and orders robot to collect package from this shelf
+ * \param robotId -  ID of the robot
+ */
 void RobotSupervisor::collectThePackage(int robotId)
 {
     Robot* r = busyRobots[robotId];
-    QVector<Shelf*> v;
     for (auto &a: floor->shelves)
     {
         for (auto &b: a)
@@ -90,7 +97,6 @@ void RobotSupervisor::collectThePackage(int robotId)
                 {
                         r->takePackage(b->removePackage(r->order->pkgId));
                         r->pkg->changeStatus(PackageStatus::onTheWay);
-                        //qDebug() << "robot collected package number " << r->order->pkgId;
                         return;
                 }
                 else
@@ -101,6 +107,11 @@ void RobotSupervisor::collectThePackage(int robotId)
     qDebug() << "there is no shelf";
 }
 
+/*!
+ * \brief Orders robot to leave the package on shelf
+ * Finds the shelf on the floor that robot was going to and orders robot to leave package on this shelf
+ * \param robotId - ID of the robot
+ */
 void RobotSupervisor::leavePackage(int robotId)
 {
     Robot* r = busyRobots[robotId];
@@ -111,20 +122,22 @@ void RobotSupervisor::leavePackage(int robotId)
             if(b->posX == r->order->posEnd.first && b->posY == r->order->posEnd.second)
             {
                 r->pkg->changeStatus(PackageStatus::delivered);
-               // qDebug() << "LEAVINGGGGG PKG: " << r->order << "SHELF POS: << " << b->posX << " " << b->posY;
                 emit packageLeftOnShelf(r->order);
                 b->addPackage(r->leavePackage());
                 return;
             }
         }
     }
-    qDebug() << "THERE IS NO GOOD SHELF" << r->order->posEnd.first << " " << r->order->posEnd.second;
 }
 
+/*!
+ * \brief Assigns robot to execute the order
+ * Finds free robot for order and computes the path. If there is no free robot, sends signal to the Supervisor that order cannot be accepted.
+ * \param o - order that has to be executed
+ */
 void RobotSupervisor::sendRobot(Order* o)
 {
     QPair<int,int> destination;
-    //qDebug() << "POLE KONCOWE: " << o->posStart.first << " " << o->posStart.second;
     destination = determineEndField(o->posStart);
     int robotId = chooseFreeRobot(destination);
     if (robotId != -1)
@@ -137,6 +150,12 @@ void RobotSupervisor::sendRobot(Order* o)
     emit orderNotAccepted(o);
 }
 
+/*!
+ * \brief Moves all the robots (one step)
+ * For all busy robots performes one step from the path taking into consideration the occupancy status of the field.
+ * Updates waitingRobots, if robot reached its destination orders to leave/collect package.
+ * If robot has finished the order removes it from busyRobots and adds to freeRobots.
+ */
 void RobotSupervisor::moveRobots()
 {
     QVector<int> finishedRobots;
@@ -144,8 +163,6 @@ void RobotSupervisor::moveRobots()
     auto end = robotsPaths.cend();
     for (auto a = robotsPaths.cbegin(); a != end; ++a)
     {
-        // crashes when robot is already on final tile
-        //floor->tiles[busyRobots[a.key()]->getCurrentPosition().first][busyRobots[a.key()]->getCurrentPosition().second]->changeTileStatus(TileStatus::empty);
         if(!robotsPaths[a.key()].isEmpty())
         {
             floor->tiles[busyRobots[a.key()]->getCurrentPosition().first][busyRobots[a.key()]->getCurrentPosition().second]->changeTileStatus(TileStatus::empty);
@@ -158,13 +175,11 @@ void RobotSupervisor::moveRobots()
                 robotsWaiting[a.key()] = 0;
             robotsPaths[a.key()].pop_front();
         }
-        //floor->tiles[busyRobots[a.key()]->getCurrentPosition().first][busyRobots[a.key()]->getCurrentPosition().second]->changeTileStatus(TileStatus::occupied);
         if(robotsPaths[a.key()].isEmpty())
         {
             if(!busyRobots[a.key()]->isBusy())
             {
                 collectThePackage(a.key());
-               // qDebug() << "collecting package nr: " << busyRobots[a.key()]->order->pkgId << " robot id: " << a.key() << " robot pos: " << busyRobots[a.key()]->getCurrentPosition().first << " " << busyRobots[a.key()]->getCurrentPosition().second;
                 sendRobotId(a.key(), busyRobots[a.key()]->order->posEnd);
             }
             else
@@ -172,7 +187,6 @@ void RobotSupervisor::moveRobots()
                 QVector<QPair<int,int>> v = findNeighbourFields(busyRobots[a.key()]->getCurrentPosition());
                 if (v.contains(busyRobots[a.key()]->order->posEnd))
                 {
-                   // qDebug() << "leaving package nr: " << busyRobots[a.key()]->order->pkgId << " robot id: " << a.key() << " robot pos: " << busyRobots[a.key()]->getCurrentPosition().first << " " << busyRobots[a.key()]->getCurrentPosition().second;
                     leavePackage(a.key());
                     freeRobots.insert(a.key(), busyRobots[a.key()]);
                     robotsWaiting.remove(a.key());
@@ -206,9 +220,12 @@ void RobotSupervisor::moveRobots()
     }
     if(checkForDeadlock())
         resolveDeadlock();
-     printGrid();
 }
 
+/*!
+ * \brief Synchronizes the robots to avoid collisions
+ * Checks if there are robots that are going to the same field in next step, if so, adds the field that one robot is standing on to the path in order to let the other one go first.
+ */
 void RobotSupervisor::robotsSynch()
 {
     auto end = robotsPaths.cend();
@@ -221,7 +238,6 @@ void RobotSupervisor::robotsSynch()
                if(robotsPaths[a.key()][0] == robotsPaths[b.key()][0])
                {
                    robotsPaths[b.key()].emplaceFront(busyRobots[b.key()]->getCurrentPosition());
-                   //qDebug() << "COLLISION " << busyRobots[a.key()]->posX << busyRobots[a.key()]->posY << " and " << busyRobots[b.key()]->posX << " " << busyRobots[b.key()]->posY;
                }
                QPair<int,int> posA = busyRobots[a.key()]->getCurrentPosition();
                QPair<int,int> posB = busyRobots[b.key()]->getCurrentPosition();
@@ -236,6 +252,12 @@ void RobotSupervisor::robotsSynch()
     }
 }
 
+/*!
+ * \brief Sends particular robot to target field (used for recalculating path)
+ * \param id - ID of the robot
+ * \param d - position of the shelf
+ * \return true - if path was found, false if the path was not found
+ */
 bool RobotSupervisor::sendRobotId(int id, QPair<int, int> d)
 {
     QPair<int,int> destination;
@@ -250,6 +272,11 @@ bool RobotSupervisor::sendRobotId(int id, QPair<int, int> d)
     return true;
 }
 
+/*!
+ * \brief Determines field near shelf based on its position
+ * \param shelfPos position of the shelf
+ * \return
+ */
 QPair<int, int> RobotSupervisor::determineEndField(QPair<int, int> shelfPos)
 {
     QVector<QPair<int,int>> allFields = findNeighbourFields(shelfPos);
@@ -262,6 +289,10 @@ QPair<int, int> RobotSupervisor::determineEndField(QPair<int, int> shelfPos)
     return v[rand()%v.size()];
 }
 
+/*!
+ * \brief Checks if there occurs some deadlock and robots cannot move
+ * \return true if there is a busy robot that stayed in the same place for more than 4 turns
+ */
 bool RobotSupervisor::checkForDeadlock()
 {
     for (int &a: robotsWaiting.keys())
@@ -274,46 +305,11 @@ bool RobotSupervisor::checkForDeadlock()
     return false;
 }
 
-void RobotSupervisor::printGrid()
-{
-    QVector<QVector<int>> grid;
-    for (int i = 0; i < floor->floorSize.first; i++)
-    {
-        QVector<int> column;
-        for (int j = 0; j < floor->floorSize.second; j++)
-        {
-            column.push_back(0);
-        }
-        grid.push_back(column);
-    }
-    for (auto a: freeRobots.keys())
-    {
-        grid[freeRobots[a]->getCurrentPosition().first][freeRobots[a]->getCurrentPosition().second] = 1;
-    }
-    for (auto a: busyRobots.keys())
-    {
-        grid[busyRobots[a]->getCurrentPosition().first][busyRobots[a]->getCurrentPosition().second] = 2;
-    }
-    for (auto a: floor->shelves)
-    {
-        for(auto b: a)
-        {
-            grid[b->posX][b->posY] = 3;
-        }
-    }
-
-    qDebug() << "grid: ";
-    for (int j = 0; j < floor->floorSize.second; j++)
-    {
-        QDebug deb = qDebug();
-        for (int i = 0; i < floor->floorSize.first ; i++)
-        {
-            deb << grid[i][j];
-        }
-        qDebug() << " ";
-    }
-}
-
+/*!
+ * \brief Finds fields next to given field
+ * \param p - coordinates of the field
+ * \return vector of the neighbour fields
+ */
 QVector<QPair<int, int> > RobotSupervisor::findNeighbourFields(QPair<int, int> p)
 {
     QVector<QPair<int,int>> v;
@@ -337,6 +333,9 @@ QVector<QPair<int, int> > RobotSupervisor::findNeighbourFields(QPair<int, int> p
     return v;
 }
 
+/*!
+ * \brief Resolves deadlocks - recalculates paths for all robots
+ */
 void RobotSupervisor::resolveDeadlock()
 {
     for (auto a: busyRobots.keys())

@@ -12,6 +12,9 @@
 #define ROW X
 #define COL Y
 
+
+
+
 // Creating a shortcut for int, int pair type
 typedef std::pair<int, int> Pair;
 
@@ -27,6 +30,10 @@ struct cell {
     double f, g, h;
 };
 
+/*!
+ * \brief The AStar class
+ * Used for finding the shortest path between two points
+ */
 class AStar
 {
 public:
@@ -39,7 +46,6 @@ public:
 
     ~AStar()
     {
-        //qDebug() << "oboze umieram";
     }
     bool isValid(int row, int col)
     {
@@ -104,8 +110,6 @@ public:
             trace.push_back(QPair<int,int>(p.first,p.second));
         }
         trace.pop_front();
-        for (auto a: trace)
-            //qDebug() << "-> (" <<  a.first << ", " <<  a.second << ")";
         return;
     }
 
@@ -233,7 +237,6 @@ public:
                     // Set the Parent of the destination cell
                     cellDetails[i - 1][j].parent_i = i;
                     cellDetails[i - 1][j].parent_j = j;
-                    //qDebug() << "The destination cell is found\n";
                     tracePath(cellDetails, dest);
                     foundDest = true;
                     return;

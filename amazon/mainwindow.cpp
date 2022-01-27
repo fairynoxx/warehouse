@@ -4,6 +4,11 @@
 #include "floor.h"
 #include <QScrollBar>
 
+/*!
+ * \brief Constructor of the class
+ * Creates Supervisor and RobotSupervisor, connects signals and slots, initializes UI
+ * \param parent - parent
+ */
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -17,11 +22,19 @@ MainWindow::MainWindow(QWidget *parent)
     connect(S, &Supervisor::updateLogs, this, &MainWindow::updateLogs);
 }
 
+/*!
+ * \brief Destructor of the class
+ */
 MainWindow::~MainWindow()
 {
     delete ui;
 }
 
+/*!
+ * \brief Initializes the floor of the warehouse
+ * \param sizeX - width of the warehouse
+ * \param sizeY - height of the warehouse
+ */
 void MainWindow::initFloor(int sizeX, int sizeY)
 {
    floorW = new class Floor(sizeX, sizeY, this);
@@ -30,9 +43,14 @@ void MainWindow::initFloor(int sizeX, int sizeY)
    this->ui->horizontalLayout->insertWidget(0, floorW);
 }
 
-
+/*!
+ * \brief Action after clicking button Create
+ * Creates the floor based on size of the warehouse, adds robots and shelves, initializes timers for actions
+ */
 void MainWindow::on_pushButton_clicked()
 {
+    if (isCreated)
+        return;
     initFloor(ui->spinBoxWidth->value(), ui->spinBoxHeight->value());
     floorW->setFloorSize(ui->spinBoxWidth->value(),ui->spinBoxHeight->value());
     QPair<int,int> start(0,std::round(ui->spinBoxHeight->value()/2));
@@ -74,13 +92,22 @@ void MainWindow::on_pushButton_clicked()
     newPkgTimer->start(2000);
     newOrderTimer->start(5000);
     checkPackagesTimer->start(500);
+    isCreated = true;
 }
 
+/*!
+ * \brief Makes one step of the simulation periodically
+ */
 void MainWindow::makeStep()
 {
     RS->moveRobots();
 }
 
+/*!
+ * \brief Updates logs in user interface based on package from completed order
+ * \param id - ID of package
+ * \param type - type of the package
+ */
 void MainWindow::updateLogs(int id, PackageType type)
 {
     ui->logWindowMag->clear();
@@ -117,8 +144,12 @@ void MainWindow::updateLogs(int id, PackageType type)
     ui->logWindowsEnd->verticalScrollBar()->setValue(ui->logWindowsEnd->verticalScrollBar()->maximum());
 
 }
-// new order for taking package from the shelf
 
+/*!
+ * \brief Randomly selects a package from available on shelves packages and tells Supervisor that the package has been requested
+ * \param id - ID of the package
+ * \param type - type of the package
+ */
 void MainWindow::newOrder()
 {
     QVector<int> packages = S->getPackagesOnShelves();
@@ -127,9 +158,11 @@ void MainWindow::newOrder()
         return;
     int chosenPackage = rand() % numOfPackages;
     S->packageRequested(packages[chosenPackage]);
-
 }
 
+/*!
+ * \brief Adds new package of random type periodically
+ */
 void MainWindow::newPackage()
 {
     PackageType t;
@@ -150,14 +183,12 @@ void MainWindow::newPackage()
         t = PackageType::cat1;
         break;
     }
-//    QString text = "created new package of category:"+QString::number(static_cast<int>(t));
-//    ui->logWindow->appendPlainText(text);
-//    ui->logWindow->verticalScrollBar()->setValue(ui->logWindow->verticalScrollBar()->maximum());
     updateLogs(S->addPackage(t), PackageType::start);
-
-
 }
 
+/*!
+ * \brief Checks if there are new orders periodically
+ */
 void MainWindow::checkOrders()
 {
     S->checkForOrders();

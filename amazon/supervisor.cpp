@@ -1,16 +1,30 @@
 #include "supervisor.h"
 
+/*!
+ * \brief Constructor of the class
+ */
 Supervisor::Supervisor()
 {
 
 }
 
+/*!
+ * \brief Adds shelf to the warehouse
+ * \param x - x coordinate of position
+ * \param y - y coordinate of position
+ * \param type - type of the shelf
+ */
 void Supervisor::addShelf(int x, int y, PackageType type)
 {
     floor->addShelf(x, y, type);
     stateOfShelves.insert(QPair<int,int>(x,y),0);
 }
 
+/*!
+ * \brief Creates new package
+ * \param type - type of package
+ * \return ID of the package
+ */
 int Supervisor::addPackage(PackageType type)
 {
     Package* pkg = new Package(numOfPackages, type);
@@ -18,22 +32,34 @@ int Supervisor::addPackage(PackageType type)
     allPackages.insert(pkg->getPackageId(), pkg);
     packages.enqueue(pkg);
     return pkg->getPackageId();
-    //floor->shelves[PackageType::start][0]->addPackage(pkg);
 }
 
-
+/*!
+ * \brief Sets start shelf of the warehouse
+ * \param p - position of the start shelf
+ */
 void Supervisor::setStartTile(QPair<int, int> p)
 {
     startTile = p;
     floor->addShelf(p.first, p.second, PackageType::start);
 }
 
+/*!
+ * \brief Sets end shelf of the warehouse
+ * \param p - position of end shelf
+ */
 void Supervisor::setEndTile(QPair<int, int> p)
 {
     endTile = p;
     floor->addShelf(p.first, p.second, PackageType::end);
 }
 
+/*!
+ * \brief Checks if there are new packages waiting and prepares an order
+ * If there are packages waiting chooses the first package, finds shelf for it.
+ * If there are no free shelves, puts package at the end of the queue.
+ * If there are free shelves sends an order to Robot Supervisor
+ */
 void Supervisor::checkForOrders()
 {
     if(!packages.isEmpty())
@@ -45,7 +71,7 @@ void Supervisor::checkForOrders()
         if(o->posEnd.first == -1)
         {
             delete o;
-            //qDebug() << "no free shelf";
+            qDebug() << "no free shelf";
             Package* p = packages.front();
             packages.pop_front();
             packages.enqueue(p);
@@ -58,6 +84,10 @@ void Supervisor::checkForOrders()
     }
 }
 
+/*!
+ * \brief Prepares an order for requested package
+ * \param pkgId - ID of the package
+ */
 void Supervisor::packageRequested(int pkgId)
 {
     Order* o = new Order;
@@ -68,30 +98,10 @@ void Supervisor::packageRequested(int pkgId)
     emit sendOrder(o);
 }
 
-QVector<int> Supervisor::updateShelves()
-{
-    QVector<int> pkgIds;
-    QVector<Package*> pkgs;
-    for(auto &a: floor->shelves)
-    {
-        for(auto b: a)
-        {
-            QDebug deb = qDebug();
-            if(b->getShelfType() != PackageType::start && b->getShelfType() != PackageType::end)
-            {
-                //qDebug() << "shelf on: " << b->posX << " " << b->posY;
-                pkgs = b->getAllPackages();
-                for(auto c: pkgs)
-                {
-                    pkgIds.push_back(c->getPackageId());
-                    deb << c->getPackageId();
-                }
-            }
-        }
-    }
-    return pkgIds;
-}
-
+/*!
+ * \brief Gives vector of IDs of all available packages on shelves (excluding start and end)
+ * \return
+ */
 QVector<int> Supervisor::getPackagesOnShelves()
 {
     QVector<int> ids;
@@ -111,13 +121,19 @@ QVector<int> Supervisor::getPackagesOnShelves()
     return ids;
 }
 
+/*!
+ * \brief Gives position of the free shelf of particular type
+ *  Adds package ID and shelf to the packagesOnShelves
+ * \param pkgId - ID of the pacakge
+ * \param type - type of the package
+ * \return position of the chosen shelf - if (-1,-1) there are no free shelves
+ */
 QPair<int, int> Supervisor::findShelfForPackage(int pkgId, PackageType type)
 {
     for (auto a: floor->shelves[type])
     {
         if(stateOfShelves[QPair<int,int>(a->posX, a->posY)] < MAX_PKGS)
         {
-            //qDebug() << "ale super polka omg " << a->posX << " " << a->posY;
             QPair<int,int> pos(a->posX,a->posY);
             stateOfShelves[pos]++;
             packagesOnShelves.insert(pkgId, a);
@@ -127,6 +143,11 @@ QPair<int, int> Supervisor::findShelfForPackage(int pkgId, PackageType type)
     return QPair<int,int>(-1,-1);
 }
 
+/*!
+ * \brief Cancels the order when RobotSupervisor gives the signal that there are no free robots
+ * Removes package from packagesOnShelves and status of the package from waiting to delivered
+ * \param o - order that is cancelled
+ */
 void Supervisor::cancelOrder(Order * o)
 {
     if (o->posStart == startTile)
@@ -141,6 +162,11 @@ void Supervisor::cancelOrder(Order * o)
     }
 }
 
+/*!
+ * \brief Completes the order
+ * Updates state of the shelves and sends signal to update the logs
+ * \param o
+ */
 void Supervisor::orderCompleted(Order* o)
 {
     if (o->posEnd == endTile)

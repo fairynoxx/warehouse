@@ -83,7 +83,6 @@ void Floor::addRobot(QPair<int,int> pos)
     Robot *r = new Robot(pos, tileSize);
     robots.push_back(r);
     scene->addItem(r);
-    //qDebug() << r->x() << " " << r->y();
 }
 
 /*!
