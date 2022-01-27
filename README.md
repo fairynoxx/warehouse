@@ -2,4 +2,4 @@ Project relized for course of Event-based control in specialization of Embedded 
 
 January 2022
 
-Documentation of the code is available in warehouse/html/inxdex.html
+Documentation of the code is available in amazon//html/inxdex.html
