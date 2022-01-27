@@ -1,0 +1,4 @@
+<map id="Robot" name="Robot">
+<area shape="rect" id="node4" href="$structOrder.html" title="Order pkgId &#45; id of the package posStart &#45; position of the shelf on which package is waiting posEnd &#45;..." alt="" coords="279,5,333,32"/>
+<area shape="rect" id="node5" href="$classPackage.html" title="The Package class Represents single package in the warehouse. " alt="" coords="357,5,431,32"/>
+</map>

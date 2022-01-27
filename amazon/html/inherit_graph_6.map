@@ -1,0 +1,7 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node2" href="$classRobot.html" title="Declaration of class Robot. " alt="" coords="239,5,296,32"/>
+<area shape="rect" id="node3" href="$classShelf.html" title="The Shelf class Represents one shelf on the floor of the warehouse. " alt="" coords="241,56,293,83"/>
+<area shape="rect" id="node4" href="$classTile.html" title="The Tile class. " alt="" coords="246,107,289,133"/>
+<area shape="rect" id="node6" href="$classRobotSupervisor.html" title="The RobotSupervisor class Manages the robots on the floor of the warehouse, assigns orders from Super..." alt="" coords="208,208,327,235"/>
+<area shape="rect" id="node7" href="$classSupervisor.html" title="The Supervisor class Chooses the destination for the packages, sends orders. " alt="" coords="225,157,309,184"/>
+</map>
